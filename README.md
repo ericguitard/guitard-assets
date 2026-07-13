@@ -1,1 +1,2 @@
 # guitard-assets
+Guitard Inc.
