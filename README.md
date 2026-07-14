@@ -1,9 +1,9 @@
 # guitard.ca assets
 
-Public static images and identity assets used by https://guitard.ca.
+This repository contains the public static images and identity assets used to operate and maintain https://guitard.ca.
 
-The names, logos, trademarks, visual identity, and other branding materials contained in this repository are proprietary and remain the exclusive property of their respective owner.
+Unless expressly stated otherwise, all content in this repository—including source code, text, designs, images, names, logos, trademarks, branding, visual identity, and related materials—are proprietary and remain the exclusive property of their respective rights holders.
 
-Their public availability does not grant any license or permission to copy, modify, redistribute, publish, or use them for commercial or non-commercial purposes. Third-party use requires prior written authorization.
+Public access to this repository does not grant any licence or permission to copy, modify, reproduce, distribute, publish, sublicense, or otherwise use its contents for commercial or non-commercial purposes. Any third-party use requires prior written authorization from the applicable rights holder.
 
 All rights reserved.
