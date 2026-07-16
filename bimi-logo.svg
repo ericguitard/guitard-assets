@@ -3,7 +3,7 @@
   <title>Guitard Inc.</title>
   <desc>Guitard Inc. logo</desc>
   <rect width="1000" height="1000" fill="#ffffff"/>
-  <g fill="#000000">
+  <g fill="#000000" stroke-width="0">
     <circle cx="813.63" cy="413.92" r="17.139"/>
     <circle cx="749.58" cy="423.95" r="17.139"/>
     <circle cx="686.9"  cy="409.8"  r="17.139"/>
