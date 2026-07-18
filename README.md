@@ -1,7 +1,6 @@
 # guitard.ca — Static Assets
 
-> ⚠️ **Proprietary content.** Public access does not grant any licence to use these materials.  
-> See [Licence Notice](#licence-notice) below.
+> ⚠️ **Proprietary content.** Public access does not grant any licence to use these materials. See [Licence Notice](#licence-notice) below.
 
 ---
 
