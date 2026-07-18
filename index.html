@@ -12,8 +12,8 @@
   <link rel="canonical" href="https://guitard.ca/">
 
   <!-- Speed up the handoff to the destination origin -->
-  <link rel="preconnect" href="https://guitard.ca/">
-  <link rel="dns-prefetch" href="https://guitard.ca/">
+  <link rel="preconnect" href="https://guitard.ca">
+  <link rel="dns-prefetch" href="https://guitard.ca">
 
   <!--
     Hash-based CSP: only the exact inline script below may run — no other
@@ -24,7 +24,7 @@
     frame-ancestors cannot be set via <meta> and needs the header form.
   -->
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'none'; script-src 'sha256-4fRvXMNe8f7FoTndXoVw9Nm5gEwDM8ke7wl/hLqcdVw='; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none';">
+        content="default-src 'none'; script-src 'sha256-hwqWVzyd/7wKQ/tqLrdlYzygHka63ywodAyR9316C20='; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none';">
 
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
@@ -37,7 +37,7 @@
     /* Minimal inline styling only — no external stylesheet for a redirect page */
     :root {
       color-scheme: light dark;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      font-family: system-ui, sans-serif;
     }
     *, *::before, *::after { box-sizing: border-box; }
     body {
@@ -87,19 +87,12 @@
     }
   </style>
 
-  <script>
-    // Redirect as early as possible, before the rest of the page parses/paints.
-    // location.replace avoids adding a history entry for the redirect page itself.
-    (function () {
-      try {
-        location.replace("https://guitard.ca/");
-      } catch (e) {
-        // Extremely rare (e.g. sandboxed iframe blocking navigation) — meta refresh
-        // and the visible link below still cover this case.
-        window.location.href = "https://guitard.ca/";
-      }
-    })();
-  </script>
+  <!--
+    Redirect as early as possible; location.replace avoids a history entry.
+    Kept on ONE line with no surrounding whitespace: the CSP hash covers every
+    byte between the script tags, so reformatting/minification would break it.
+  -->
+  <script>try{location.replace("https://guitard.ca/")}catch(e){window.location.href="https://guitard.ca/"}</script>
 </head>
 <body>
   <main>
