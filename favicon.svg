@@ -2,8 +2,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="logo-title logo-desc" viewBox="0 0 1000 1000">
   <title id="logo-title">Guitard Inc.</title>
   <desc id="logo-desc">Guitard Inc. favicon</desc>
-  <rect width="1000" height="1000" fill="#fff"/>
-  <g fill="#000">
+  <style>
+    g { fill: #000; }
+    @media (prefers-color-scheme: dark) {
+      g { fill: #fff; }
+    }
+  </style>
+  <g>
     <circle cx="813.63" cy="413.92" r="17.14"/>
     <circle cx="749.58" cy="423.95" r="17.14"/>
     <circle cx="686.9" cy="409.8" r="17.14"/>
