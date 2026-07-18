@@ -3,22 +3,112 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
   <title>Redirecting to guitard.ca</title>
+
+  <!-- Discourage indexing of this transitional page -->
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="referrer" content="no-referrer">
   <meta name="description" content="This page redirects to guitard.ca.">
-
   <link rel="canonical" href="https://guitard.ca/">
 
-  <!-- Fallback for no-JS environments -->
+  <!-- Speed up the handoff to the destination origin -->
+  <link rel="preconnect" href="https://guitard.ca/">
+  <link rel="dns-prefetch" href="https://guitard.ca/">
+
+  <!--
+    Hash-based CSP: only the exact inline script below may run — no other
+    script, inline or external, is permitted. If you edit the script, you must
+    recompute its SHA-256 hash (base64 of the digest of the text between the
+    script tags) or the redirect will silently stop working.
+    Prefer sending this as an HTTP response header in production; note that
+    frame-ancestors cannot be set via <meta> and needs the header form.
+  -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'sha256-4fRvXMNe8f7FoTndXoVw9Nm5gEwDM8ke7wl/hLqcdVw='; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none';">
+
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#111111" media="(prefers-color-scheme: dark)">
+
+  <!-- No-JS / blocked-JS fallback: fires if the script hasn't already redirected -->
   <meta http-equiv="refresh" content="0; url=https://guitard.ca/">
-  <script>location.replace("https://guitard.ca/");</script>
+
+  <style>
+    /* Minimal inline styling only — no external stylesheet for a redirect page */
+    :root {
+      color-scheme: light dark;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      display: grid;
+      place-items: center;
+      min-block-size: 100vh;  /* fallback for older browsers */
+      min-block-size: 100svh;
+      padding: 1.5rem;
+      background: Canvas;
+      color: CanvasText;
+      font-size: 1rem;
+      line-height: 1.5;
+      text-align: center;
+    }
+    main { max-inline-size: 34rem; }
+    h1 {
+      margin: 0;
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      line-height: 1.2;
+      text-wrap: balance;
+    }
+    p { margin: 1rem 0 0; text-wrap: pretty; }
+    a {
+      color: LinkText;
+      text-underline-offset: 0.15em;
+    }
+    a:visited { color: VisitedText; }
+    a:focus-visible {
+      outline: 0.2rem solid Highlight;
+      outline-offset: 0.2rem;
+      border-radius: 0.125rem;
+    }
+    .spinner {
+      inline-size: 1.5rem;
+      block-size: 1.5rem;
+      margin: 0 auto 1rem;
+      border-radius: 50%;
+      border: 3px solid currentColor;
+      border-block-start-color: transparent;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    /* A frozen "broken" ring is worse than nothing — hide it entirely */
+    @media (prefers-reduced-motion: reduce) {
+      .spinner { display: none; }
+    }
+  </style>
+
+  <script>
+    // Redirect as early as possible, before the rest of the page parses/paints.
+    // location.replace avoids adding a history entry for the redirect page itself.
+    (function () {
+      try {
+        location.replace("https://guitard.ca/");
+      } catch (e) {
+        // Extremely rare (e.g. sandboxed iframe blocking navigation) — meta refresh
+        // and the visible link below still cover this case.
+        window.location.href = "https://guitard.ca/";
+      }
+    })();
+  </script>
 </head>
 <body>
   <main>
-    <h1>Redirecting to guitard.ca</h1>
-    <p>If you are not redirected automatically, <a href="https://guitard.ca/">continue to guitard.ca</a>.</p>
+    <div class="spinner" aria-hidden="true"></div>
+    <h1>Redirecting to guitard.ca&hellip;</h1>
+    <p>
+      If you are not redirected automatically,
+      <a href="https://guitard.ca/" rel="noreferrer">continue to guitard.ca</a>.
+    </p>
   </main>
 </body>
 </html>
