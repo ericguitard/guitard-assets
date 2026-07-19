@@ -3,13 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Redirecting to guitard.ca</title>
+  <title>guitard.ca</title>
 
-  <!-- Discourage indexing of this transitional page -->
+  <!-- Transitional page: keep it out of search indexes and leak no referrer -->
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="referrer" content="no-referrer">
-  <meta name="description" content="This page redirects to guitard.ca.">
-  <link rel="canonical" href="https://guitard.ca/">
+  <meta name="description" content="Redirecting to guitard.ca.">
+
+  <!-- Inline data: favicon prevents a stray /favicon.ico 404 in the logs -->
+  <link rel="icon" href="data:,">
 
   <!-- Speed up the handoff to the destination origin -->
   <link rel="preconnect" href="https://guitard.ca">
@@ -17,20 +19,28 @@
 
   <!--
     Hash-based CSP: only the exact inline script below may run — no other
-    script, inline or external, is permitted. If you edit the script, you must
-    recompute its SHA-256 hash (base64 of the digest of the text between the
-    script tags) or the redirect will silently stop working.
+    script, inline or external, is permitted. The hash is the base64 SHA-256
+    of every byte between the <script> tags; if you edit the script (even
+    whitespace), recompute it:
+
+      printf '%s' '<script body>' | openssl dgst -sha256 -binary | openssl base64
+
     Prefer sending this as an HTTP response header in production; note that
     frame-ancestors cannot be set via <meta> and needs the header form.
   -->
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'none'; script-src 'sha256-hwqWVzyd/7wKQ/tqLrdlYzygHka63ywodAyR9316C20='; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none';">
+        content="default-src 'none'; script-src 'sha256-hwqWVzyd/7wKQ/tqLrdlYzygHka63ywodAyR9316C20='; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'; upgrade-insecure-requests;">
 
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#111111" media="(prefers-color-scheme: dark)">
 
-  <!-- No-JS / blocked-JS fallback: fires if the script hasn't already redirected -->
+  <!--
+    No-JS / blocked-JS fallback. A 0-second refresh is exempt from WCAG's
+    timing rules (SC 2.2.1) because there is nothing to interact with here.
+    All URLs on this page are absolute so the file works at any path depth
+    in the guitard-assets repo.
+  -->
   <meta http-equiv="refresh" content="0; url=https://guitard.ca/">
 
   <style>
@@ -61,6 +71,10 @@
       text-wrap: balance;
     }
     p { margin: 1rem 0 0; text-wrap: pretty; }
+    .fine {
+      font-size: 0.875rem;
+      opacity: 0.75;
+    }
     a {
       color: LinkText;
       text-underline-offset: 0.15em;
@@ -88,19 +102,26 @@
   </style>
 
   <!--
-    Redirect as early as possible; location.replace avoids a history entry.
-    Kept on ONE line with no surrounding whitespace: the CSP hash covers every
-    byte between the script tags, so reformatting/minification would break it.
+    Redirect as early as possible; location.replace avoids polluting history,
+    so Back never bounces the visitor into this page again. Kept on ONE line
+    with no surrounding whitespace: the CSP hash covers every byte between
+    the script tags, so reformatting/minification would break it.
   -->
   <script>try{location.replace("https://guitard.ca/")}catch(e){window.location.href="https://guitard.ca/"}</script>
 </head>
 <body>
   <main>
     <div class="spinner" aria-hidden="true"></div>
-    <h1>Redirecting to guitard.ca&hellip;</h1>
-    <p>
+    <h1>Heading to guitard.ca&hellip;</h1>
+    <!-- role=status lets screen readers announce the handoff if the redirect is delayed;
+         it isn't a permitted role on headings, so it lives on the paragraph instead -->
+    <p role="status">
       If you are not redirected automatically,
       <a href="https://guitard.ca/" rel="noreferrer">continue to guitard.ca</a>.
+    </p>
+    <p class="fine">
+      This host serves static assets for <strong>guitard.ca</strong>.
+      There is nothing to browse here; the site itself lives at the address above.
     </p>
   </main>
 </body>
