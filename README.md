@@ -37,5 +37,4 @@ Any third-party use requires prior written authorization from the applicable rig
 
 ## Permissions
 
-To request authorization for use of any asset in this repository, contact:  
-📧 [eric@guitard.ca](mailto:eric@guitard.ca)
+To request authorization for use of any asset in this repository, please contact Eric Guitard at [eric@guitard.ca](mailto:eric@guitard.ca).
