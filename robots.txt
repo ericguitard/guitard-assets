@@ -26,5 +26,3 @@
 User-agent: *
 Content-Signal: search=no, ai-input=no, ai-train=no
 Disallow: /
-
-Sitemap: https://assets.guitard.ca/sitemap.xml
