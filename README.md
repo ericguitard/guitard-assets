@@ -10,6 +10,8 @@ This repository contains the public static images and identity assets used to op
 
 It is hosted publicly for operational and distribution purposes only.
 
+---
+
 ## Contents
 
 - Brand logos and wordmarks  
