@@ -1,4 +1,4 @@
-# https://assets.guitard.ca/robots.txt
+# robots.txt for assets.guitard.ca
 #
 # As a condition of accessing this website, you agree to abide by the following
 # content signals:
