@@ -1,7 +1,7 @@
 # robots.txt for assets.guitard.ca
 #
-# Robots Exclusion Protocol
 # RFC 9309: https://www.rfc-editor.org/info/rfc9309/
+# Robots Exclusion Protocol
 #
 # As a condition of accessing this website, you agree to abide by 
 # the following content signals:
