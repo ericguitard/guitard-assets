@@ -14,9 +14,9 @@ It is hosted publicly for operational and distribution purposes only.
 
 ## Contents
 
-- Brand logos and wordmarks  
-- Favicons and app icons  
-- Open Graph / social preview images  
+- Brand logos and wordmarks
+- Favicons and app icons
+- Open Graph / social preview images
 - General UI and decorative imagery
 
 *(Structure may change without notice.)*
