@@ -1,4 +1,4 @@
-# assets.guitard.ca — MIME types and cache policy
+# MIME types and cache policy for assets.guitard.ca
 
 # Stable icon filenames revalidate daily while shared caches may retain them.
 /*.png
