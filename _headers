@@ -1,3 +1,6 @@
+# assets.guitard.ca — MIME types and cache policy
+
+# Stable icon filenames revalidate daily while shared caches may retain them.
 /*.png
   Content-Type: image/png
   Cache-Control: public, max-age=86400, s-maxage=2592000, stale-while-revalidate=604800, stale-if-error=2592000
@@ -10,6 +13,7 @@
   Content-Type: image/vnd.microsoft.icon
   Cache-Control: public, max-age=86400, s-maxage=2592000, stale-while-revalidate=604800, stale-if-error=2592000
 
+# Public metadata and discovery files.
 /robots.txt
   Content-Type: text/plain; charset=utf-8
   Cache-Control: public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400
