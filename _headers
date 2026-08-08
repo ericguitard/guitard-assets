@@ -1,6 +1,10 @@
 # MIME types and cache policy for assets.guitard.ca
 
 # Stable icon filenames revalidate daily while shared caches may retain them.
+/*.jpg
+  Content-Type: image/png
+  Cache-Control: public, max-age=86400, s-maxage=2592000, stale-while-revalidate=604800, stale-if-error=2592000
+
 /*.png
   Content-Type: image/png
   Cache-Control: public, max-age=86400, s-maxage=2592000, stale-while-revalidate=604800, stale-if-error=2592000
