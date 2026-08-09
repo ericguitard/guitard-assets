@@ -1,5 +1,11 @@
 # MIME types and cache policy for assets.guitard.ca
 
+# Assets must be usable by guitard.ca subdomains and external consumers,
+# including email clients retrieving the BIMI image.
+/*
+  Access-Control-Allow-Origin: *
+  Cross-Origin-Resource-Policy: cross-origin
+
 # Stable icon filenames revalidate daily while shared caches may retain them.
 /*.jpg
   Content-Type: image/jpeg
