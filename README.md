@@ -25,16 +25,14 @@ It is hosted publicly for operational and distribution purposes only.
 
 ## Licence Notice
 
-All content in this repository — including source code, configuration files, documentation, text, designs, images, names, logos, trademarks, branding, visual identity, and related materials — is proprietary and remains the exclusive property of its respective rights holders.
+All content in this repository—including source code, configuration files, documentation, text, designs, images, names, logos, trademarks, branding, visual identity, itinerary data, and related materials—is proprietary and remains the exclusive property of its respective rights holders.
 
-Public access to this repository does not grant any licence or permission to copy, modify, reproduce, distribute, publish, sublicense, create derivative works from, or otherwise use its contents for any purpose, commercial or non-commercial.
+Access to this repository or its deployed content does not grant any licence or permission to copy, modify, reproduce, distribute, publish, sublicense, create derivative works from, or otherwise use its contents for any commercial or non-commercial purpose.
 
 Any third-party use requires prior written authorization from the applicable rights holder.
 
 **All rights reserved.**
 
----
-
 ## Permissions
 
-To request authorization for use of any asset in this repository, please contact Eric Guitard at [eric@guitard.ca](mailto:eric@guitard.ca).
+To request authorization to use an asset or other repository content, contact Eric Guitard at [eric@guitard.ca](mailto:eric@guitard.ca).
