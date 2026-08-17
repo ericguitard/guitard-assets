@@ -74,7 +74,7 @@ if (missingResponse.status !== 404) {
     missingPath,
   );
   const missingHtml = await missingResponse.text();
-  if (!missingHtml.includes("Image not found.")) {
+  if (!missingHtml.includes("Image Not Found.")) {
     failures.push(`${missingPath}: custom 404 page content was not returned`);
   }
 }
