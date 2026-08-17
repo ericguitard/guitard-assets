@@ -6,7 +6,7 @@
 
 ## About
 
-This repository contains the public static images and identity assets published at [assets.guitard.ca](https://assets.guitard.ca), a subdomain maintenance under [guitard.ca](https://guitard.ca).
+This repository contains the public static images and identity assets published at [assets.guitard.ca](https://assets.guitard.ca), a subdomain maintained under [guitard.ca](https://guitard.ca).
 
 It is hosted publicly for operational and distribution purposes only.
 
