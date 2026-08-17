@@ -6,18 +6,21 @@
 
 ## About
 
-This repository contains the public static images and identity assets published at [assets.guitard.ca](https://assets.guitard.ca), a subdomain maintained under [guitard.ca](https://guitard.ca).
+This repository contains the public image and identity assets distributed from [assets.guitard.ca](https://assets.guitard.ca) for Guitard Inc. websites, application icons, social previews, and email authentication.
 
-It is hosted publicly for operational and distribution purposes only.
+The repository is published through GitHub Pages and proxied by Cloudflare. It is an asset origin rather than a browsable file directory: the root redirects to [guitard.ca](https://guitard.ca/), while unknown file addresses return the custom image-focused `404` page.
 
 ---
 
 ## Contents
 
-- Brand logos and wordmarks
-- Favicons and app icons
-- Open Graph / social preview images
+- Brand marks and BIMI artwork
+- Favicons, application icons, and maskable icons
+- Open Graph and social preview images
+- Responsive screenshot images
 - General UI and decorative imagery
+- Custom missing-asset page and stylesheet
+- Header documentation and automated validation
 
 *(Structure may change without notice.)*
 
