@@ -1,29 +1,43 @@
 # MIME types and cache policy for assets.guitard.ca
 
-# Assets must be usable by guitard.ca subdomains and external consumers,
-# including email clients retrieving the BIMI image.
+# Every published resource is intentionally usable across origins, including favicons, social previews, and the BIMI image retrieved by email clients.
 /*
   Access-Control-Allow-Origin: *
   Cross-Origin-Resource-Policy: cross-origin
+  Content-Security-Policy: default-src 'none'; script-src https://static.cloudflareinsights.com; script-src-attr 'none'; connect-src 'self'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  X-Content-Type-Options: nosniff
 
-# Stable icon filenames revalidate daily while shared caches may retain them.
+# Unknown asset addresses use the custom image-focused error document.
+/404.html
+  Content-Type: text/html; charset=utf-8
+  Cache-Control: max-age=600
+  Referrer-Policy: no-referrer
+  X-Frame-Options: DENY
+  X-Robots-Tag: noindex, nofollow
+
+# The error-page stylesheet uses a query-string version and the same four-hour browser lifetime currently delivered by production asset responses.
+/css/*.css
+  Content-Type: text/css; charset=utf-8
+  Cache-Control: max-age=14400
+
+# Image assets currently receive a uniform four-hour browser cache lifetime.
 /*.jpg
   Content-Type: image/jpeg
-  Cache-Control: public, max-age=86400, s-maxage=2592000, stale-while-revalidate=604800, stale-if-error=2592000
+  Cache-Control: max-age=14400
 
 /*.png
   Content-Type: image/png
-  Cache-Control: public, max-age=86400, s-maxage=2592000, stale-while-revalidate=604800, stale-if-error=2592000
+  Cache-Control: max-age=14400
 
 /*.svg
-  Content-Type: image/svg+xml; charset=utf-8
-  Cache-Control: public, max-age=86400, s-maxage=2592000, stale-while-revalidate=604800, stale-if-error=2592000
+  Content-Type: image/svg+xml
+  Cache-Control: max-age=14400
 
-# Public metadata and discovery files.
 /favicon.ico
   Content-Type: image/vnd.microsoft.icon
-  Cache-Control: public, max-age=86400, s-maxage=2592000, stale-while-revalidate=604800, stale-if-error=2592000
+  Cache-Control: max-age=14400
 
+# Public crawler instructions use the same live four-hour lifetime.
 /robots.txt
   Content-Type: text/plain; charset=utf-8
-  Cache-Control: public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400
+  Cache-Control: max-age=14400
