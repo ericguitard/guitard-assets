@@ -6,7 +6,7 @@
 
 ## About
 
-This repository contains the public static images and identity assets used to operate and maintain [guitard.ca](https://guitard.ca).
+This repository contains the public static images and identity assets published at [assets.guitard.ca](https://assets.guitard.ca), a subdomain maintenance under [guitard.ca](https://guitard.ca).
 
 It is hosted publicly for operational and distribution purposes only.
 
@@ -25,9 +25,9 @@ It is hosted publicly for operational and distribution purposes only.
 
 ## Licence Notice
 
-All content in this repository—including source code, configuration files, documentation, text, designs, images, names, logos, trademarks, branding, visual identity, itinerary data, and related materials—is proprietary and remains the exclusive property of its respective rights holders.
+All content in this repository—including source code, configuration files, documentation, text, designs, images, names, logos, trademarks, branding, visual identity, and related materials—is proprietary and remains the exclusive property of its respective rights holders.
 
-Access to this repository or its deployed content does not grant any licence or permission to copy, modify, reproduce, distribute, publish, sublicense, create derivative works from, or otherwise use its contents for any commercial or non-commercial purpose.
+Access to this repository or its deployed content does not grant any licence or permission to copy, modify, reproduce, distribute, publish, sublicence, create derivative works from, or otherwise use its contents for any commercial or non-commercial purpose.
 
 Any third-party use requires prior written authorization from the applicable rights holder.
 
