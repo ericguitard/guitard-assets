@@ -291,18 +291,6 @@ h1 {
   outline-offset: 3px;
 }
 
-footer {
-  width: min(100%, 70rem);
-  margin: 1.5rem auto 0;
-  color: var(--muted);
-  font-size: 0.75rem;
-  text-align: center;
-}
-
-footer p {
-  margin: 0;
-}
-
 @media (max-width: 48rem) {
   .error-layout {
     grid-template-columns: 1fr;
