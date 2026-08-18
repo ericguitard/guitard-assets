@@ -1,4 +1,4 @@
-# guitard.ca — Static Assets
+# guitard.ca — Assets
 
 ---
 
@@ -16,8 +16,7 @@ The repository is published through GitHub Pages and proxied by Cloudflare. It i
 - Favicons, application icons, and maskable icons
 - Open Graph and social preview images
 - Responsive screenshot images
-- General UI and decorative imagery
-- Custom missing-asset page and stylesheet
+- Custom missing-asset 404 page and stylesheet
 - Manifest-driven local, deployment, and production validation
 - Header documentation and gated GitHub Pages deployment
 
@@ -27,6 +26,6 @@ The repository is published through GitHub Pages and proxied by Cloudflare. It i
 
 ## Authoritative Documentation
 
-- [Deployment and validation](DEPLOYMENT.md)
-- [Security policy](SECURITY.md)
-- [Rights, licence, and permissions](RIGHTS.md)
+- [Validation, Deployment, and Repository Configuration](DEPLOYMENT.md)
+- [Security Policy](SECURITY.md)
+- [Rights, Licence, and Permissions](RIGHTS.md)

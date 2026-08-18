@@ -1,6 +1,6 @@
 # Rights, Licence, and Permissions
 
-## Proprietary rights
+## Proprietary Rights
 
 Copyright © Guitard Inc. and the applicable rights holders. All rights reserved.
 
@@ -19,5 +19,5 @@ commercial or non-commercial purpose.
 ## Permissions
 
 Any third-party use requires prior written authorization from the applicable
-rights holder. To request authorization, contact Eric Guitard at
-[eric@guitard.ca](mailto:eric@guitard.ca).
+rights holder. To request authorization to use an asset or other repository
+content, contact Eric Guitard at [eric@guitard.ca](mailto:eric@guitard.ca).
