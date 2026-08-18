@@ -1,27 +1,25 @@
-import { readFile, stat } from "node:fs/promises";
+import { readFile, readdir, stat } from "node:fs/promises";
 import path from "node:path";
 
 const root = process.cwd();
 const failures = [];
+const manifest = JSON.parse(
+  await readFile(path.join(root, "assets.manifest.json"), "utf8"),
+);
 
-const expectedPngDimensions = new Map([
-  ["android-chrome-192x192.png", [192, 192]],
-  ["android-chrome-512x512.png", [512, 512]],
-  ["android-chrome-maskable-192x192.png", [192, 192]],
-  ["android-chrome-maskable-512x512.png", [512, 512]],
-  ["apple-touch-icon.png", [180, 180]],
-  ["favicon-16x16.png", [16, 16]],
-  ["favicon-32x32.png", [32, 32]],
-  ["favicon-96x96.png", [96, 96]],
-  ["og-image.png", [1200, 630]],
-  ["screenshot-mobile.png", [750, 1334]],
-  ["screenshot-wide.png", [1280, 720]],
-]);
+function fail(message) {
+  failures.push(message);
+}
 
-const expectedCsp =
-  "default-src 'none'; script-src https://static.cloudflareinsights.com; script-src-attr 'none'; connect-src 'self'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'";
+function isSafeRelativePath(relativePath) {
+  if (typeof relativePath !== "string" || !relativePath) return false;
+  if (path.isAbsolute(relativePath) || relativePath.includes("\\"))
+    return false;
+  const normalized = path.posix.normalize(relativePath);
+  return normalized === relativePath && !normalized.startsWith("../");
+}
 
-async function exists(relativePath) {
+async function isFile(relativePath) {
   try {
     return (await stat(path.join(root, relativePath))).isFile();
   } catch {
@@ -36,71 +34,209 @@ function attribute(tag, name) {
 
 function localTarget(reference) {
   if (!reference?.startsWith("/") || reference.startsWith("//")) return null;
-  const pathname = decodeURIComponent(reference.split(/[?#]/, 1)[0]);
-  const normalized = path.posix.normalize(pathname);
-  if (!normalized.startsWith("/") || normalized.includes("..")) return null;
-  return normalized.slice(1);
-}
-
-const cname = (await readFile(path.join(root, "CNAME"), "utf8")).trim();
-if (cname !== "assets.guitard.ca") {
-  failures.push(
-    `CNAME must contain assets.guitard.ca, found ${JSON.stringify(cname)}`,
-  );
-}
-
-const html = await readFile(path.join(root, "404.html"), "utf8");
-for (const tag of html.match(/<(?:a|img|link|script)\b[^>]*>/gi) ?? []) {
-  const reference = attribute(tag, "href") ?? attribute(tag, "src");
-  const target = localTarget(reference);
-  if (target && !(await exists(target))) {
-    failures.push(`404.html references missing local resource ${reference}`);
+  try {
+    const pathname = decodeURIComponent(reference.split(/[?#]/, 1)[0]);
+    const normalized = path.posix.normalize(pathname);
+    if (!normalized.startsWith("/") || normalized.includes("..")) return null;
+    return normalized.slice(1);
+  } catch {
+    return null;
   }
 }
 
-if (/<script\b(?![^>]*\bsrc\s*=)/i.test(html)) {
-  failures.push("404.html must not contain inline scripts");
-}
-if (/<style\b/i.test(html) || /\sstyle\s*=/i.test(html)) {
-  failures.push("404.html must not contain inline styles");
-}
-if (/\son[a-z]+\s*=/i.test(html)) {
-  failures.push("404.html must not contain inline event handlers");
+async function walk(relativeDirectory = "") {
+  const entries = await readdir(path.join(root, relativeDirectory), {
+    withFileTypes: true,
+  });
+  const files = [];
+  for (const entry of entries) {
+    if ([".git", ".pages", "node_modules"].includes(entry.name)) continue;
+    const relativePath = path.posix.join(relativeDirectory, entry.name);
+    if (entry.isDirectory()) files.push(...(await walk(relativePath)));
+    if (entry.isFile()) files.push(relativePath);
+  }
+  return files;
 }
 
-for (const [file, [expectedWidth, expectedHeight]] of expectedPngDimensions) {
-  const data = await readFile(path.join(root, file));
-  const signature = data.subarray(0, 8).toString("hex");
-  if (signature !== "89504e470d0a1a0a") {
-    failures.push(`${file} is not a valid PNG file`);
-    continue;
+function validatePng(data, resource) {
+  if (
+    data.length < 24 ||
+    data.subarray(0, 8).toString("hex") !== "89504e470d0a1a0a"
+  ) {
+    fail(`${resource.path} is not a valid PNG file`);
+    return;
   }
   const width = data.readUInt32BE(16);
   const height = data.readUInt32BE(20);
-  if (width !== expectedWidth || height !== expectedHeight) {
-    failures.push(
-      `${file} must be ${expectedWidth}x${expectedHeight}, found ${width}x${height}`,
+  if (width !== resource.width || height !== resource.height) {
+    fail(
+      `${resource.path} must be ${resource.width}x${resource.height}, found ${width}x${height}`,
     );
   }
 }
 
-const ico = await readFile(path.join(root, "favicon.ico"));
-if (
-  ico.readUInt16LE(0) !== 0 ||
-  ico.readUInt16LE(2) !== 1 ||
-  ico.readUInt16LE(4) < 1
-) {
-  failures.push("favicon.ico does not contain a valid ICO directory");
+function validateIco(data, relativePath) {
+  if (
+    data.length < 6 ||
+    data.readUInt16LE(0) !== 0 ||
+    data.readUInt16LE(2) !== 1
+  ) {
+    fail(`${relativePath} does not contain a valid ICO directory`);
+    return;
+  }
+  const count = data.readUInt16LE(4);
+  if (count < 1 || data.length < 6 + count * 16) {
+    fail(`${relativePath} has an invalid ICO entry table`);
+    return;
+  }
+  for (let index = 0; index < count; index += 1) {
+    const entry = 6 + index * 16;
+    const size = data.readUInt32LE(entry + 8);
+    const offset = data.readUInt32LE(entry + 12);
+    if (size < 1 || offset < 6 + count * 16 || offset + size > data.length) {
+      fail(`${relativePath} has an invalid ICO image entry at index ${index}`);
+    }
+  }
 }
 
-for (const file of ["bimi-logo.svg", "favicon.svg"]) {
-  const svg = await readFile(path.join(root, file), "utf8");
-  if (!/<svg\b/i.test(svg) || !/<title\b/i.test(svg)) {
-    failures.push(`${file} must contain an SVG root and accessible title`);
+function validateSvg(svg, resource) {
+  const rootTag = svg.match(/<svg\b[^>]*>/i)?.[0];
+  if (!rootTag || !/<title\b/i.test(svg)) {
+    fail(`${resource.path} must contain an SVG root and accessible title`);
   }
   if (/<script\b/i.test(svg) || /\son[a-z]+\s*=/i.test(svg)) {
-    failures.push(`${file} must not contain executable script content`);
+    fail(`${resource.path} must not contain executable script content`);
   }
+  if (/\s(?:href|xlink:href)\s*=\s*["'](?:https?:|\/\/)/i.test(svg)) {
+    fail(`${resource.path} must not reference external resources`);
+  }
+
+  if (resource.profile === "bimi-tiny-ps" && rootTag) {
+    if (attribute(rootTag, "version") !== "1.2") {
+      fail(`${resource.path} must declare SVG version 1.2 for BIMI`);
+    }
+    if (attribute(rootTag, "baseProfile") !== "tiny-ps") {
+      fail(`${resource.path} must declare baseProfile tiny-ps for BIMI`);
+    }
+    const viewBox = attribute(rootTag, "viewBox")
+      ?.trim()
+      .split(/\s+/)
+      .map(Number);
+    if (
+      !viewBox ||
+      viewBox.length !== 4 ||
+      viewBox.some((value) => !Number.isFinite(value)) ||
+      viewBox[2] !== viewBox[3]
+    ) {
+      fail(`${resource.path} must use a square BIMI viewBox`);
+    }
+    if (/<style\b/i.test(svg) || /\sstyle\s*=/i.test(svg)) {
+      fail(`${resource.path} must not contain CSS in its BIMI Tiny-PS profile`);
+    }
+  }
+}
+
+if (manifest.version !== 1) fail("assets.manifest.json must use version 1");
+if (manifest.origin !== "https://assets.guitard.ca") {
+  fail("assets.manifest.json origin must be https://assets.guitard.ca");
+}
+
+const resourcePaths = new Set();
+for (const resource of manifest.resources ?? []) {
+  if (!isSafeRelativePath(resource.path)) {
+    fail(
+      `Manifest contains unsafe resource path ${JSON.stringify(resource.path)}`,
+    );
+    continue;
+  }
+  if (resourcePaths.has(resource.path)) {
+    fail(`Manifest contains duplicate resource ${resource.path}`);
+    continue;
+  }
+  resourcePaths.add(resource.path);
+  if (typeof resource.contentType !== "string" || !resource.contentType) {
+    fail(`${resource.path} is missing contentType in the manifest`);
+  }
+  if (typeof resource.cacheControl !== "string" || !resource.cacheControl) {
+    fail(`${resource.path} is missing cacheControl in the manifest`);
+  }
+  if (!(await isFile(resource.path))) {
+    fail(`Manifest resource is missing: ${resource.path}`);
+    continue;
+  }
+
+  const data = await readFile(path.join(root, resource.path));
+  if (resource.contentType === "image/png") validatePng(data, resource);
+  if (resource.contentType === "image/vnd.microsoft.icon") {
+    validateIco(data, resource.path);
+  }
+  if (resource.contentType === "image/svg+xml") {
+    validateSvg(data.toString("utf8"), resource);
+  }
+}
+
+for (const relativePath of manifest.siteFiles ?? []) {
+  if (!isSafeRelativePath(relativePath) || !(await isFile(relativePath))) {
+    fail(`Site file is missing or unsafe: ${JSON.stringify(relativePath)}`);
+  }
+}
+
+const publicExtensions = new Set([
+  ".css",
+  ".ico",
+  ".jpeg",
+  ".jpg",
+  ".png",
+  ".svg",
+]);
+const discoveredPublicFiles = (await walk()).filter(
+  (relativePath) =>
+    publicExtensions.has(path.posix.extname(relativePath).toLowerCase()) ||
+    relativePath === "robots.txt",
+);
+for (const relativePath of discoveredPublicFiles) {
+  if (!resourcePaths.has(relativePath)) {
+    fail(
+      `Public resource is not declared in assets.manifest.json: ${relativePath}`,
+    );
+  }
+}
+
+const cname = (await readFile(path.join(root, "CNAME"), "utf8")).trim();
+if (cname !== manifest.cname) {
+  fail(`CNAME must contain ${manifest.cname}, found ${JSON.stringify(cname)}`);
+}
+
+const html = await readFile(
+  path.join(root, manifest.errorDocument.path),
+  "utf8",
+);
+const references = [];
+for (const tag of html.match(/<(?:a|img|link|script)\b[^>]*>/gi) ?? []) {
+  references.push(attribute(tag, "href") ?? attribute(tag, "src"));
+}
+for (const tag of html.match(/<meta\b[^>]*>/gi) ?? []) {
+  const key = attribute(tag, "property") ?? attribute(tag, "name");
+  if (["og:image", "twitter:image"].includes(key)) {
+    references.push(attribute(tag, "content"));
+  }
+}
+for (const reference of references) {
+  const target = localTarget(reference);
+  if (target && !(await isFile(target))) {
+    fail(
+      `${manifest.errorDocument.path} references missing local resource ${reference}`,
+    );
+  }
+}
+if (/<script\b(?![^>]*\bsrc\s*=)/i.test(html)) {
+  fail(`${manifest.errorDocument.path} must not contain inline scripts`);
+}
+if (/<style\b/i.test(html) || /\sstyle\s*=/i.test(html)) {
+  fail(`${manifest.errorDocument.path} must not contain inline styles`);
+}
+if (/\son[a-z]+\s*=/i.test(html)) {
+  fail(`${manifest.errorDocument.path} must not contain inline event handlers`);
 }
 
 const robots = await readFile(path.join(root, "robots.txt"), "utf8");
@@ -109,19 +245,19 @@ for (const directive of [
   "Content-Signal: search=yes, ai-input=no, ai-train=no",
   "Allow: /",
 ]) {
-  if (!robots.includes(directive))
-    failures.push(`robots.txt is missing ${directive}`);
+  if (!robots.includes(directive)) fail(`robots.txt is missing ${directive}`);
 }
 
 const headers = await readFile(path.join(root, "_headers"), "utf8");
 for (const value of [
-  "Access-Control-Allow-Origin: *",
-  "Cross-Origin-Resource-Policy: cross-origin",
-  `Content-Security-Policy: ${expectedCsp}`,
-  "Cache-Control: max-age=14400",
-  "Content-Type: text/html; charset=utf-8",
+  `Access-Control-Allow-Origin: ${manifest.headers.accessControlAllowOrigin}`,
+  `Cross-Origin-Resource-Policy: ${manifest.headers.crossOriginResourcePolicy}`,
+  `Content-Security-Policy: ${manifest.headers.contentSecurityPolicy}`,
+  `X-Content-Type-Options: ${manifest.headers.xContentTypeOptions}`,
+  `Cache-Control: ${manifest.errorDocument.cacheControl}`,
+  `Content-Type: ${manifest.errorDocument.contentType}`,
 ]) {
-  if (!headers.includes(value)) failures.push(`_headers is missing ${value}`);
+  if (!headers.includes(value)) fail(`_headers is missing ${value}`);
 }
 
 if (failures.length) {
@@ -129,6 +265,6 @@ if (failures.length) {
   process.exitCode = 1;
 } else {
   console.log(
-    "Asset files, dimensions, local references, robots rules, and header documentation are valid.",
+    `Validated ${resourcePaths.size} manifested resources, deployment files, local references, BIMI requirements, robots rules, and header documentation.`,
   );
 }

@@ -1,0 +1,237 @@
+# Deployment and Repository Configuration
+
+This guide configures `guitard-assets` so that pull requests are validated,
+production deploys only after validation, Cloudflare is purged after deployment,
+and the public origin is smoke-tested after every release and once per day.
+
+## 1. Prepare and validate the change
+
+1. Create a signed feature branch from the current `main` branch.
+2. Add the generated files and commit them with a verified signature.
+3. Install Node.js 24 and pnpm 11.19.0.
+4. Run:
+
+   ```text
+   pnpm install --frozen-lockfile
+   pnpm run check
+   pnpm run stage:pages
+   ```
+
+5. Confirm that `.pages` contains only the 19 files declared by
+   `assets.manifest.json` and `siteFiles`.
+6. Push the branch and open a pull request. The `Validate / Validate repository`
+   check should run automatically.
+
+The live check will report a cache-policy mismatch until the Cloudflare 404 rule
+in section 6 is deployed.
+
+## 2. Configure the GitHub Pages source
+
+Before merging the pull request:
+
+1. Open the repository on GitHub.
+2. Go to **Settings → Pages**.
+3. Under **Build and deployment**, set **Source** to **GitHub Actions**.
+4. Keep the custom domain set to `assets.guitard.ca`.
+5. Keep **Enforce HTTPS** enabled.
+
+The current production deployment remains available while the new workflow is
+prepared. The next push to `main` will run `.github/workflows/deploy.yml`.
+
+## 3. Protect `main`
+
+Open **Settings → Rules → Rulesets → Protect main** and retain the current rules:
+
+- Restrict deletions
+- Require linear history
+- Require signed commits
+- Block force pushes
+
+Add these rules after the pull-request validation check has appeared once:
+
+1. **Require a pull request before merging**.
+2. Set required approvals to `0` for a solo-maintainer repository, or `1` when a
+   second reviewer is available.
+3. Enable **Require conversation resolution before merging**.
+4. Add **Require status checks to pass**.
+5. Select `Validate / Validate repository`.
+6. Enable the option requiring the branch to be current before merging, if it is
+   available for the repository plan.
+
+Do not add a bypass unless an emergency release procedure requires one.
+
+## 4. Protect the Pages environment
+
+1. Go to **Settings → Environments**.
+2. Open or create the `github-pages` environment.
+3. Under deployment branches and tags, allow only `main`.
+4. For a solo maintainer, leave required reviewers disabled. For a team, add a
+   reviewer and prevent self-review if independent approval is required.
+
+The deploy job already grants only `contents: read`, `pages: write`, and
+`id-token: write` to the step that publishes the Pages artifact.
+
+Under **Settings → Actions → General**:
+
+1. Allow GitHub-authored actions and `pnpm/action-setup`, or add those actions to
+   the repository's explicit allowlist.
+2. Set the default workflow permission to **Read repository contents and
+   packages**.
+3. Leave **Allow GitHub Actions to create and approve pull requests** disabled
+   unless a separate automation explicitly requires it.
+
+## 5. Configure the Cloudflare cache-purge credential
+
+The purge is optional but recommended because it prevents a previously cached
+404 or asset from surviving a deployment.
+
+1. In Cloudflare, create a custom API token.
+2. Grant only **Zone → Cache Purge → Purge**.
+3. Restrict the token to the `guitard.ca` zone.
+4. Copy the zone ID from the Cloudflare zone overview.
+5. In GitHub, go to **Settings → Secrets and variables → Actions**.
+6. Create repository secret `CLOUDFLARE_API_TOKEN` containing the token.
+7. Create repository variable `CLOUDFLARE_ZONE_ID` containing the zone ID.
+
+The workflow purges only the exact public URLs in `assets.manifest.json`, the
+root address, and `404.html`. If either value is absent, the purge is skipped and
+the smoke test still runs with retries.
+
+## 6. Configure Cloudflare delivery rules
+
+### DNS and TLS
+
+Confirm the following existing settings:
+
+1. The `assets` DNS record is a proxied CNAME to `ericguitard.github.io`.
+2. SSL/TLS mode is **Full (strict)**.
+3. **Always Use HTTPS** is enabled.
+4. HSTS sends at least `max-age=31536000; includeSubDomains; preload`.
+
+### Root redirect
+
+Keep or create a 301 redirect rule:
+
+```text
+(http.host eq "assets.guitard.ca" and http.request.uri.path eq "/")
+```
+
+Redirect to `https://guitard.ca/`.
+
+### Common response headers
+
+Create a Response Header Transform Rule matching:
+
+```text
+(http.host eq "assets.guitard.ca")
+```
+
+Use **Set static** for these headers:
+
+| Header | Value |
+| --- | --- |
+| `Access-Control-Allow-Origin` | `*` |
+| `Cross-Origin-Resource-Policy` | `cross-origin` |
+| `Content-Security-Policy` | `default-src 'none'; script-src https://static.cloudflareinsights.com; script-src-attr 'none'; connect-src 'self'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'` |
+| `X-Content-Type-Options` | `nosniff` |
+
+### Custom 404 response
+
+Create a later Response Header Transform Rule matching:
+
+```text
+(http.host eq "assets.guitard.ca" and http.response.code eq 404)
+```
+
+Use **Set static** for:
+
+| Header | Value |
+| --- | --- |
+| `Cache-Control` | `max-age=600` |
+| `Content-Type` | `text/html; charset=utf-8` |
+| `Referrer-Policy` | `no-referrer` |
+| `X-Frame-Options` | `DENY` |
+| `X-Robots-Tag` | `noindex, nofollow` |
+
+Place this rule after the common response-header rule so its values take
+precedence. On plans supporting Cache Response Rules, also set the 404 edge TTL
+to 600 seconds. On other plans, the deployment purge removes newly created asset
+URLs from Cloudflare's edge cache.
+
+### Asset cache policy
+
+Keep the Cloudflare browser cache lifetime at four hours for stable asset names.
+The later 404 response rule overrides the visitor-facing error cache header to
+10 minutes. If Cache Response Rules are available, use one to align the 404 edge
+TTL with the same 10-minute policy.
+
+After changing rules, purge the affected URLs or purge the `assets.guitard.ca`
+hostname once.
+
+## 7. Configure repository security and automation
+
+Under **Settings → Code security and analysis**:
+
+1. Enable the dependency graph.
+2. Enable Dependabot alerts and security updates.
+3. Enable secret scanning and push protection when available.
+4. Optionally enable CodeQL default setup for JavaScript.
+
+The generated Dependabot configuration checks both npm dependencies and pinned
+GitHub Actions weekly.
+
+Under repository **General** settings, use:
+
+- Description: `Static brand and identity assets for Guitard Inc.`
+- Website: `https://assets.guitard.ca`
+- Suggested topics: `assets`, `branding`, `cloudflare`, `github-pages`
+
+Issues may remain disabled because `SECURITY.md` provides a private reporting
+channel.
+
+## 8. Merge and verify the first deployment
+
+1. Merge the pull request after `Validate / Validate repository` succeeds.
+2. Open **Actions → Deploy production**.
+3. Confirm the jobs complete in this order:
+
+   ```text
+   Validate before deployment
+   → Package Pages artifact
+   → Deploy GitHub Pages
+   → Validate deployed origin
+   ```
+
+4. Confirm the Cloudflare purge step ran when the token and zone variable were
+   configured.
+5. Run **Actions → Validate production → Run workflow** once manually.
+6. Confirm the workflow validates all 16 resources, content equality, HTTP and
+   HTTPS behavior, TLS lifetime, HSTS, MIME types, cache headers, CORS, CSP, and
+   the custom 404 page.
+
+The scheduled monitor then runs daily at 11:27 UTC. GitHub may delay scheduled
+workflows during periods of high load, so the post-deployment smoke test remains
+the primary release check.
+
+## 9. Ongoing asset changes
+
+For every new or renamed public file:
+
+1. Add or update its entry in `assets.manifest.json`.
+2. Include MIME type and cache policy.
+3. Include exact width and height for PNG files.
+4. Run `pnpm run check` and `pnpm run stage:pages`.
+5. Open a pull request and wait for validation.
+
+An undeclared public image, stylesheet, icon, or `robots.txt` file causes CI to
+fail. Files not declared in the manifest are not included in the Pages artifact.
+
+## 10. Rollback
+
+If the custom deployment fails after merge:
+
+1. Revert the merge with a new signed commit or pull request.
+2. Run **Deploy production** manually on the reverted `main` branch.
+3. If necessary, temporarily switch **Settings → Pages → Source** back to
+   deployment from `main` while investigating.
+4. Purge the affected Cloudflare URLs after the rollback deploys.

@@ -1,0 +1,130 @@
+{
+  "version": 1,
+  "origin": "https://assets.guitard.ca",
+  "cname": "assets.guitard.ca",
+  "rootRedirect": "https://guitard.ca/",
+  "siteFiles": [".nojekyll", "404.html", "CNAME"],
+  "headers": {
+    "accessControlAllowOrigin": "*",
+    "crossOriginResourcePolicy": "cross-origin",
+    "contentSecurityPolicy": "default-src 'none'; script-src https://static.cloudflareinsights.com; script-src-attr 'none'; connect-src 'self'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+    "xContentTypeOptions": "nosniff"
+  },
+  "errorDocument": {
+    "path": "404.html",
+    "contentType": "text/html; charset=utf-8",
+    "cacheControl": "max-age=600",
+    "marker": "Image Not Found"
+  },
+  "monitoring": {
+    "minimumCertificateValidityDays": 21,
+    "hstsMinimumMaxAge": 31536000,
+    "hstsIncludeSubDomains": true,
+    "hstsPreload": true
+  },
+  "resources": [
+    {
+      "path": "android-chrome-192x192.png",
+      "contentType": "image/png",
+      "cacheControl": "max-age=14400",
+      "width": 192,
+      "height": 192
+    },
+    {
+      "path": "android-chrome-512x512.png",
+      "contentType": "image/png",
+      "cacheControl": "max-age=14400",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "path": "android-chrome-maskable-192x192.png",
+      "contentType": "image/png",
+      "cacheControl": "max-age=14400",
+      "width": 192,
+      "height": 192
+    },
+    {
+      "path": "android-chrome-maskable-512x512.png",
+      "contentType": "image/png",
+      "cacheControl": "max-age=14400",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "path": "apple-touch-icon.png",
+      "contentType": "image/png",
+      "cacheControl": "max-age=14400",
+      "width": 180,
+      "height": 180
+    },
+    {
+      "path": "bimi-logo.svg",
+      "contentType": "image/svg+xml",
+      "cacheControl": "max-age=14400",
+      "profile": "bimi-tiny-ps"
+    },
+    {
+      "path": "css/style.css",
+      "contentType": "text/css; charset=utf-8",
+      "cacheControl": "max-age=14400"
+    },
+    {
+      "path": "favicon-16x16.png",
+      "contentType": "image/png",
+      "cacheControl": "max-age=14400",
+      "width": 16,
+      "height": 16
+    },
+    {
+      "path": "favicon-32x32.png",
+      "contentType": "image/png",
+      "cacheControl": "max-age=14400",
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "favicon-96x96.png",
+      "contentType": "image/png",
+      "cacheControl": "max-age=14400",
+      "width": 96,
+      "height": 96
+    },
+    {
+      "path": "favicon.ico",
+      "contentType": "image/vnd.microsoft.icon",
+      "cacheControl": "max-age=14400"
+    },
+    {
+      "path": "favicon.svg",
+      "contentType": "image/svg+xml",
+      "cacheControl": "max-age=14400"
+    },
+    {
+      "path": "og-image.png",
+      "contentType": "image/png",
+      "cacheControl": "max-age=14400",
+      "width": 1200,
+      "height": 630
+    },
+    {
+      "path": "robots.txt",
+      "contentType": "text/plain; charset=utf-8",
+      "cacheControl": "max-age=14400"
+    },
+    {
+      "path": "screenshot-mobile.png",
+      "contentType": "image/png",
+      "cacheControl": "max-age=14400",
+      "width": 750,
+      "height": 1334
+    },
+    {
+      "path": "screenshot-wide.png",
+      "contentType": "image/png",
+      "cacheControl": "max-age=14400",
+      "width": 1280,
+      "height": 720
+    }
+  ]
+}
