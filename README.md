@@ -33,7 +33,9 @@ The repository is published through GitHub Pages and proxied by Cloudflare. It i
 MIME type, cache policy, and expected image dimensions. Pull requests run the
 repository checks, while the production workflow validates the repository,
 packages only declared public files, deploys to GitHub Pages, and smoke-tests the
-Cloudflare-proxied origin.
+Cloudflare-proxied origin. Each release also publishes `deployment.json` with the
+exact Git commit so the monitor can detect a stale deployment, and it verifies
+that repository code and documentation remain unavailable from the asset host.
 
 Run `pnpm run check` for repository validation, `pnpm run stage:pages` to preview
 the Pages artifact, and `pnpm run validate:live` to test production.

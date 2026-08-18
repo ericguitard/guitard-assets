@@ -6,8 +6,10 @@ and the public origin is smoke-tested after every release and once per day.
 
 ## 1. Prepare and validate the change
 
-1. Create a signed feature branch from the current `main` branch.
-2. Add the generated files and commit them with a verified signature.
+1. On GitHub, upload the changed files to a new branch created from the current
+   `main` branch. GitHub web commits are signed by GitHub and satisfy the signed
+   commit rule.
+2. Open a pull request for the web-upload branch.
 3. Install Node.js 24 and pnpm 11.19.0.
 4. Run:
 
@@ -17,13 +19,9 @@ and the public origin is smoke-tested after every release and once per day.
    pnpm run stage:pages
    ```
 
-5. Confirm that `.pages` contains only the 19 files declared by
-   `assets.manifest.json` and `siteFiles`.
-6. Push the branch and open a pull request. The `Validate / Validate repository`
-   check should run automatically.
-
-The live check will report a cache-policy mismatch until the Cloudflare 404 rule
-in section 6 is deployed.
+5. Confirm that `.pages` contains only the 20 expected files: 19 declared public
+   files plus the generated `deployment.json` commit marker.
+6. Confirm the `Validate / Validate repository` check runs automatically.
 
 ## 2. Configure the GitHub Pages source
 
@@ -92,9 +90,11 @@ The purge is optional but recommended because it prevents a previously cached
 6. Create repository secret `CLOUDFLARE_API_TOKEN` containing the token.
 7. Create repository variable `CLOUDFLARE_ZONE_ID` containing the zone ID.
 
-The workflow purges only the exact public URLs in `assets.manifest.json`, the
-root address, and `404.html`. If either value is absent, the purge is skipped and
-the smoke test still runs with retries.
+The workflow purges only exact URLs: declared public resources, the generated
+deployment marker, the root and error document, versioned query-string variants,
+and non-public paths that could have been cached by an earlier deployment. It
+batches requests at Cloudflare's 100-URL limit. If either value is absent, the
+purge is skipped and the smoke test still runs with retries.
 
 ## 6. Configure Cloudflare delivery rules
 
@@ -198,15 +198,16 @@ channel.
    Validate before deployment
    → Package Pages artifact
    → Deploy GitHub Pages
-   → Validate deployed origin
+   → Purge and validate production
    ```
 
 4. Confirm the Cloudflare purge step ran when the token and zone variable were
    configured.
 5. Run **Actions → Validate production → Run workflow** once manually.
-6. Confirm the workflow validates all 16 resources, content equality, HTTP and
-   HTTPS behavior, TLS lifetime, HSTS, MIME types, cache headers, CORS, CSP, and
-   the custom 404 page.
+6. Confirm the workflow validates the exact deployment commit, all 16 resources,
+   all 13 non-public paths, content equality, HTTP and HTTPS behavior, TLS
+   lifetime, HSTS, MIME types, cache headers, CORS, CSP, and the exact custom 404
+   response.
 
 The scheduled monitor then runs daily at 11:27 UTC. GitHub may delay scheduled
 workflows during periods of high load, so the post-deployment smoke test remains

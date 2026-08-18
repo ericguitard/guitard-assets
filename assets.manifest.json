@@ -4,6 +4,27 @@
   "cname": "assets.guitard.ca",
   "rootRedirect": "https://guitard.ca/",
   "siteFiles": [".nojekyll", "404.html", "CNAME"],
+  "deploymentMarker": {
+    "path": "deployment.json",
+    "contentType": "application/json; charset=utf-8",
+    "cacheControl": "max-age=14400"
+  },
+  "cacheVariants": ["css/style.css?v=20260816-1"],
+  "nonPublicPaths": [
+    ".gitignore",
+    ".htmlvalidate.json",
+    ".github/workflows/deploy.yml",
+    "DEPLOYMENT.md",
+    "README.md",
+    "RIGHTS.md",
+    "SECURITY.md",
+    "_headers",
+    "assets.manifest.json",
+    "package.json",
+    "pnpm-lock.yaml",
+    "scripts/validate-live.mjs",
+    "stylelint.config.mjs"
+  ],
   "headers": {
     "accessControlAllowOrigin": "*",
     "crossOriginResourcePolicy": "cross-origin",
@@ -14,6 +35,7 @@
     "path": "404.html",
     "contentType": "text/html; charset=utf-8",
     "cacheControl": "max-age=600",
+    "crossOriginResourcePolicy": "same-site",
     "marker": "Image Not Found"
   },
   "monitoring": {
