@@ -6,7 +6,7 @@
 
 ## About
 
-This repository contains the public image and identity assets distributed from [assets.guitard.ca](https://assets.guitard.ca) for Guitard Inc. websites, application icons, social previews, and email authentication.
+This repository contains the public image and identity assets distributed from [assets.guitard.ca](https://assets.guitard.ca) for Guitard Inc. websites, applications, social previews, and email authentication.
 
 The repository is published through GitHub Pages and proxied by Cloudflare. It is an asset origin rather than a browsable file directory: the root redirects to [guitard.ca](https://guitard.ca/), while unknown file addresses return the custom image-focused `404` page.
 
