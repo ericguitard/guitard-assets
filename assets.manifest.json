@@ -7,7 +7,7 @@
   "deploymentMarker": {
     "path": "deployment.json",
     "contentType": "application/json; charset=utf-8",
-    "cacheControl": "max-age=14400"
+    "cacheControl": "max-age=600"
   },
   "cacheVariants": ["css/style.css?v=20260816-1"],
   "nonPublicPaths": [
