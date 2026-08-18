@@ -13,38 +13,48 @@ const root = process.cwd();
 const manifest = JSON.parse(
   await readFile(path.join(root, "assets.manifest.json"), "utf8"),
 );
+const toPublicUrl = (relativePath) =>
+  new URL(`/${relativePath}`, manifest.origin).href;
 const urls = [
   ...new Set([
     new URL("/", manifest.origin).href,
-    new URL(`/${manifest.errorDocument.path}`, manifest.origin).href,
-    ...manifest.resources.map(
-      ({ path: relativePath }) =>
-        new URL(`/${relativePath}`, manifest.origin).href,
+    toPublicUrl(manifest.errorDocument.path),
+    toPublicUrl(manifest.deploymentMarker.path),
+    ...manifest.resources.map(({ path: relativePath }) =>
+      toPublicUrl(relativePath),
     ),
+    ...manifest.cacheVariants.map(toPublicUrl),
+    ...manifest.nonPublicPaths.map(toPublicUrl),
   ]),
 ];
 
-const response = await fetch(
-  `https://api.cloudflare.com/client/v4/zones/${encodeURIComponent(zoneId)}/purge_cache`,
-  {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-      "User-Agent": "guitard-assets-deployer/1.0",
+const batchSize = 100;
+for (let index = 0; index < urls.length; index += batchSize) {
+  const batch = urls.slice(index, index + batchSize);
+  const response = await fetch(
+    `https://api.cloudflare.com/client/v4/zones/${encodeURIComponent(zoneId)}/purge_cache`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        "User-Agent": "guitard-assets-deployer/2.0",
+      },
+      body: JSON.stringify({ files: batch }),
+      signal: AbortSignal.timeout(30_000),
     },
-    body: JSON.stringify({ files: urls }),
-    signal: AbortSignal.timeout(30_000),
-  },
-);
-const result = await response.json();
-if (!response.ok || result.success !== true) {
-  const messages = (result.errors ?? [])
-    .map(({ code, message }) => `${code}: ${message}`)
-    .join("; ");
-  throw new Error(
-    `Cloudflare cache purge failed with HTTP ${response.status}${messages ? ` (${messages})` : ""}`,
   );
+  const result = await response.json();
+  if (!response.ok || result.success !== true) {
+    const messages = (result.errors ?? [])
+      .map(({ code, message }) => `${code}: ${message}`)
+      .join("; ");
+    throw new Error(
+      `Cloudflare cache purge failed with HTTP ${response.status}${messages ? ` (${messages})` : ""}`,
+    );
+  }
 }
 
-console.log(`Purged ${urls.length} asset URLs from Cloudflare.`);
+console.log(
+  `Purged ${urls.length} exact URLs from Cloudflare in ${Math.ceil(urls.length / batchSize)} request(s).`,
+);

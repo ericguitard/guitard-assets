@@ -14,6 +14,8 @@ const retryDelayMs = Math.max(
   0,
   Number.parseInt(process.env.LIVE_VALIDATE_DELAY_MS ?? "10000", 10),
 );
+const expectedDeploymentSha =
+  process.env.EXPECTED_DEPLOYMENT_SHA ?? process.env.GITHUB_SHA;
 
 function normalizedText(buffer) {
   return buffer.toString("utf8").replaceAll("\r\n", "\n");
@@ -117,9 +119,114 @@ function validateHsts(response, pathname, failures) {
   }
 }
 
+function validateCommonHeaders(response, pathname, failures) {
+  expectHeader(
+    response,
+    "access-control-allow-origin",
+    manifest.headers.accessControlAllowOrigin,
+    pathname,
+    failures,
+  );
+  expectHeader(
+    response,
+    "cross-origin-resource-policy",
+    manifest.headers.crossOriginResourcePolicy,
+    pathname,
+    failures,
+  );
+  expectHeader(
+    response,
+    "content-security-policy",
+    manifest.headers.contentSecurityPolicy,
+    pathname,
+    failures,
+  );
+  expectHeader(
+    response,
+    "x-content-type-options",
+    manifest.headers.xContentTypeOptions,
+    pathname,
+    failures,
+  );
+  validateHsts(response, pathname, failures);
+}
+
+async function validateErrorResponse(
+  response,
+  pathname,
+  expectedHtml,
+  failures,
+  requireExactBody = false,
+) {
+  if (response.status !== 404) {
+    failures.push(`${pathname}: expected 404, found ${response.status}`);
+    return;
+  }
+  expectHeader(
+    response,
+    "content-type",
+    manifest.errorDocument.contentType,
+    pathname,
+    failures,
+  );
+  expectHeader(
+    response,
+    "cache-control",
+    manifest.errorDocument.cacheControl,
+    pathname,
+    failures,
+  );
+  expectHeader(
+    response,
+    "access-control-allow-origin",
+    manifest.headers.accessControlAllowOrigin,
+    pathname,
+    failures,
+  );
+  expectHeader(
+    response,
+    "cross-origin-resource-policy",
+    manifest.errorDocument.crossOriginResourcePolicy,
+    pathname,
+    failures,
+  );
+  expectHeader(
+    response,
+    "content-security-policy",
+    manifest.headers.contentSecurityPolicy,
+    pathname,
+    failures,
+  );
+  expectHeader(
+    response,
+    "x-content-type-options",
+    manifest.headers.xContentTypeOptions,
+    pathname,
+    failures,
+  );
+  expectHeader(response, "referrer-policy", "no-referrer", pathname, failures);
+  expectHeader(response, "x-frame-options", "DENY", pathname, failures);
+  expectHeader(
+    response,
+    "x-robots-tag",
+    "noindex, nofollow",
+    pathname,
+    failures,
+  );
+  validateHsts(response, pathname, failures);
+
+  const missingHtml = normalizedText(Buffer.from(await response.arrayBuffer()));
+  if (requireExactBody && missingHtml !== expectedHtml) {
+    failures.push(`${pathname}: custom 404 body does not match 404.html`);
+  }
+}
+
 async function validateOnce() {
   const failures = [];
   const origin = new URL(manifest.origin);
+  const expectedErrorHtml = normalizedText(
+    await readFile(path.join(root, manifest.errorDocument.path)),
+  );
 
   await validateCertificate(
     origin.hostname,
@@ -150,7 +257,62 @@ async function validateOnce() {
     failures,
   );
 
-  let hstsValidated = false;
+  const markerPath = `/${manifest.deploymentMarker.path}`;
+  const markerResponse = await request(origin, markerPath);
+  if (markerResponse.status !== 200) {
+    failures.push(
+      `${markerPath}: expected 200 deployment marker, found ${markerResponse.status}`,
+    );
+  } else {
+    expectHeader(
+      markerResponse,
+      "content-type",
+      manifest.deploymentMarker.contentType,
+      markerPath,
+      failures,
+    );
+    expectHeader(
+      markerResponse,
+      "cache-control",
+      manifest.deploymentMarker.cacheControl,
+      markerPath,
+      failures,
+    );
+    validateCommonHeaders(markerResponse, markerPath, failures);
+    try {
+      const marker = JSON.parse(await markerResponse.text());
+      if (marker.version !== 1) {
+        failures.push(
+          `${markerPath}: expected marker version 1, found ${JSON.stringify(marker.version)}`,
+        );
+      }
+      if (!/^[0-9a-f]{40}$/i.test(marker.commit ?? "")) {
+        failures.push(
+          `${markerPath}: deployment commit is not a full commit SHA`,
+        );
+      } else if (
+        expectedDeploymentSha &&
+        marker.commit.toLowerCase() !== expectedDeploymentSha.toLowerCase()
+      ) {
+        failures.push(
+          `${markerPath}: production is at ${marker.commit}, expected ${expectedDeploymentSha}`,
+        );
+      }
+      if (!Number.isFinite(Date.parse(marker.deployedAt))) {
+        failures.push(`${markerPath}: deployedAt is not a valid timestamp`);
+      }
+      if (marker.source !== "github-pages-actions") {
+        failures.push(
+          `${markerPath}: expected source github-pages-actions, found ${JSON.stringify(marker.source)}`,
+        );
+      }
+    } catch (error) {
+      failures.push(
+        `${markerPath}: invalid deployment marker JSON (${error.message})`,
+      );
+    }
+  }
+
   for (const resource of manifest.resources) {
     const pathname = `/${resource.path}`;
     const response = await request(origin, pathname);
@@ -172,38 +334,7 @@ async function validateOnce() {
       pathname,
       failures,
     );
-    expectHeader(
-      response,
-      "access-control-allow-origin",
-      manifest.headers.accessControlAllowOrigin,
-      pathname,
-      failures,
-    );
-    expectHeader(
-      response,
-      "cross-origin-resource-policy",
-      manifest.headers.crossOriginResourcePolicy,
-      pathname,
-      failures,
-    );
-    expectHeader(
-      response,
-      "content-security-policy",
-      manifest.headers.contentSecurityPolicy,
-      pathname,
-      failures,
-    );
-    expectHeader(
-      response,
-      "x-content-type-options",
-      manifest.headers.xContentTypeOptions,
-      pathname,
-      failures,
-    );
-    if (!hstsValidated) {
-      validateHsts(response, pathname, failures);
-      hstsValidated = true;
-    }
+    validateCommonHeaders(response, pathname, failures);
 
     const liveData = Buffer.from(await response.arrayBuffer());
     const localData = await readFile(path.join(root, resource.path));
@@ -219,29 +350,22 @@ async function validateOnce() {
 
   const missingPath = `/missing-asset-${Date.now()}.png`;
   const missingResponse = await request(origin, missingPath);
-  if (missingResponse.status !== 404) {
-    failures.push(
-      `${missingPath}: expected 404, found ${missingResponse.status}`,
-    );
-  } else {
-    expectHeader(
-      missingResponse,
-      "content-type",
-      manifest.errorDocument.contentType,
-      missingPath,
+  await validateErrorResponse(
+    missingResponse,
+    missingPath,
+    expectedErrorHtml,
+    failures,
+    true,
+  );
+
+  for (const relativePath of manifest.nonPublicPaths) {
+    const pathname = `/${relativePath}`;
+    await validateErrorResponse(
+      await request(origin, pathname),
+      pathname,
+      expectedErrorHtml,
       failures,
     );
-    expectHeader(
-      missingResponse,
-      "cache-control",
-      manifest.errorDocument.cacheControl,
-      missingPath,
-      failures,
-    );
-    const missingHtml = await missingResponse.text();
-    if (!missingHtml.includes(manifest.errorDocument.marker)) {
-      failures.push(`${missingPath}: custom 404 page content was not returned`);
-    }
   }
 
   return failures;
@@ -270,6 +394,6 @@ if (finalFailures.length) {
   process.exitCode = 1;
 } else {
   console.log(
-    `Validated ${manifest.resources.length} live resources, deployed content, redirects, TLS, HSTS, MIME types, caching, CORS, CSP, and the custom 404.`,
+    `Validated production freshness, ${manifest.resources.length} live resources, ${manifest.nonPublicPaths.length} non-public paths, deployed content, redirects, TLS, HSTS, MIME types, caching, CORS, CSP, and the custom 404.`,
   );
 }

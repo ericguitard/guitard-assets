@@ -1,4 +1,4 @@
-import { copyFile, mkdir, readFile, rm } from "node:fs/promises";
+import { copyFile, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const root = process.cwd();
@@ -38,4 +38,39 @@ for (const relativePath of files) {
   await copyFile(source, destination);
 }
 
-console.log(`Staged ${files.length} public files in ${stageDirectory}.`);
+const deploymentCommit =
+  process.env.DEPLOYMENT_SHA ?? process.env.GITHUB_SHA ?? "local";
+if (deploymentCommit !== "local" && !/^[0-9a-f]{40}$/i.test(deploymentCommit)) {
+  throw new Error(
+    `DEPLOYMENT_SHA must be a full 40-character commit SHA; found ${JSON.stringify(deploymentCommit)}`,
+  );
+}
+
+const deploymentMarker = path.resolve(
+  stageDirectory,
+  manifest.deploymentMarker.path,
+);
+if (!deploymentMarker.startsWith(`${stageDirectory}${path.sep}`)) {
+  throw new Error(
+    `Refusing to stage unsafe deployment marker: ${manifest.deploymentMarker.path}`,
+  );
+}
+await mkdir(path.dirname(deploymentMarker), { recursive: true });
+await writeFile(
+  deploymentMarker,
+  `${JSON.stringify(
+    {
+      version: 1,
+      commit: deploymentCommit,
+      deployedAt: new Date().toISOString(),
+      source: "github-pages-actions",
+    },
+    null,
+    2,
+  )}\n`,
+  "utf8",
+);
+
+console.log(
+  `Staged ${files.length + 1} public files in ${stageDirectory}, including ${manifest.deploymentMarker.path}.`,
+);
