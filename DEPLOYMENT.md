@@ -73,8 +73,7 @@ The deploy job already grants only `contents: read`, `pages: write`, and
 
 Under **Settings → Actions → General**:
 
-1. Allow GitHub-authored actions and `pnpm/action-setup`, or add those actions to
-   the repository's explicit allowlist.
+1. Keep GitHub-authored actions enabled. The workflows do not require any third-party actions.
 2. Set the default workflow permission to **Read repository contents and
    packages**.
 3. Leave **Allow GitHub Actions to create and approve pull requests** disabled
