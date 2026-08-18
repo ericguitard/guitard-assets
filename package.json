@@ -4,14 +4,16 @@
   "private": true,
   "packageManager": "pnpm@11.19.0",
   "scripts": {
-    "format": "prettier --write \"css/**/*.css\" \"scripts/**/*.mjs\" \"stylelint.config.mjs\" \".htmlvalidate.json\" \".github/**/*.yml\" \"package.json\"",
-    "validate:format": "prettier --check --end-of-line auto \"css/**/*.css\" \"scripts/**/*.mjs\" \"stylelint.config.mjs\" \".htmlvalidate.json\" \".github/**/*.yml\" \"package.json\"",
+    "format": "prettier --write \"css/**/*.css\" \"scripts/**/*.mjs\" \"stylelint.config.mjs\" \"assets.manifest.json\" \".htmlvalidate.json\" \".github/**/*.yml\" \"package.json\"",
+    "validate:format": "prettier --check --end-of-line auto \"css/**/*.css\" \"scripts/**/*.mjs\" \"stylelint.config.mjs\" \"assets.manifest.json\" \".htmlvalidate.json\" \".github/**/*.yml\" \"package.json\"",
     "validate:html": "html-validate 404.html",
     "validate:css": "stylelint \"css/**/*.css\"",
-    "validate:js": "node --check stylelint.config.mjs && node --check scripts/validate-resources.mjs && node --check scripts/validate-live.mjs",
+    "validate:js": "node --check stylelint.config.mjs && node --check scripts/validate-resources.mjs && node --check scripts/validate-live.mjs && node --check scripts/stage-pages.mjs && node --check scripts/purge-cloudflare.mjs",
     "validate:resources": "node scripts/validate-resources.mjs",
     "validate:dependencies": "pnpm audit --audit-level high",
     "validate:live": "node scripts/validate-live.mjs",
+    "stage:pages": "node scripts/stage-pages.mjs",
+    "purge:cloudflare": "node scripts/purge-cloudflare.mjs",
     "check": "pnpm run validate:format && pnpm run validate:html && pnpm run validate:css && pnpm run validate:js && pnpm run validate:resources && pnpm run validate:dependencies"
   },
   "devDependencies": {

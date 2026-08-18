@@ -1,20 +1,16 @@
-name: Validate production
+name: Validate
 
 on:
+  pull_request:
+  workflow_call:
   workflow_dispatch:
-  schedule:
-    - cron: "27 11 * * *"
 
 permissions:
   contents: read
 
-concurrency:
-  group: production-monitor
-  cancel-in-progress: true
-
 jobs:
-  validate-live:
-    name: Validate production origin
+  validate:
+    name: Validate repository
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -27,8 +23,11 @@ jobs:
         with:
           node-version: 24
 
-      - name: Validate production asset origin
-        env:
-          LIVE_VALIDATE_ATTEMPTS: 3
-          LIVE_VALIDATE_DELAY_MS: 10000
-        run: node scripts/validate-live.mjs
+      - name: Install pnpm
+        run: npm install --global pnpm@11.19.0
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate asset repository
+        run: pnpm run check

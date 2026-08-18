@@ -20,13 +20,32 @@ The repository is published through GitHub Pages and proxied by Cloudflare. It i
 - Responsive screenshot images
 - General UI and decorative imagery
 - Custom missing-asset page and stylesheet
-- Header documentation and automated validation
+- Manifest-driven local, deployment, and production validation
+- Header documentation and gated GitHub Pages deployment
 
 *(Structure may change without notice.)*
 
 ---
 
+## Validation and Deployment
+
+`assets.manifest.json` is the source of truth for every published resource, its
+MIME type, cache policy, and expected image dimensions. Pull requests run the
+repository checks, while the production workflow validates the repository,
+packages only declared public files, deploys to GitHub Pages, and smoke-tests the
+Cloudflare-proxied origin.
+
+Run `pnpm run check` for repository validation, `pnpm run stage:pages` to preview
+the Pages artifact, and `pnpm run validate:live` to test production.
+
+Security concerns should be reported according to [SECURITY.md](SECURITY.md).
+Maintainer setup and release instructions are in [DEPLOYMENT.md](DEPLOYMENT.md).
+
+---
+
 ## Licence Notice
+
+The complete proprietary rights notice is available in [RIGHTS.md](RIGHTS.md).
 
 All content in this repository—including source code, configuration files, documentation, text, designs, images, names, logos, trademarks, branding, visual identity, and related materials—is proprietary and remains the exclusive property of its respective rights holders.
 
