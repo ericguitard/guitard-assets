@@ -1,4 +1,11 @@
-# Deployment and Repository Configuration
+# Validation, Deployment, and Repository Configuration
+
+This document is the single source of truth for validation, release, hosting
+configuration, and rollback procedures for `assets.guitard.ca`.
+
+`assets.manifest.json` defines every public resource path, expected MIME type,
+cache policy, and image dimension. Pull requests run the repository checks,
+while production deploys only the resources declared in that manifest.
 
 This guide configures `guitard-assets` so that pull requests are validated,
 production deploys only after validation, Cloudflare is purged after deployment,
@@ -131,7 +138,7 @@ Use **Set static** for these headers:
 | --- | --- |
 | `Access-Control-Allow-Origin` | `*` |
 | `Cross-Origin-Resource-Policy` | `cross-origin` |
-| `Content-Security-Policy` | `default-src 'none'; script-src https://static.cloudflareinsights.com; script-src-attr 'none'; connect-src 'self'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'` |
+| `Content-Security-Policy` | `default-src 'none'; script-src 'none'; script-src-attr 'none'; connect-src 'none'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'` |
 | `X-Content-Type-Options` | `nosniff` |
 
 ### Custom 404 response

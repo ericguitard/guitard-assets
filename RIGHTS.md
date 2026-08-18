@@ -1,4 +1,6 @@
-# Proprietary Rights Notice
+# Rights, Licence, and Permissions
+
+## Proprietary rights
 
 Copyright © Guitard Inc. and the applicable rights holders. All rights reserved.
 
@@ -7,10 +9,14 @@ documentation, text, designs, images, names, logos, trademarks, branding,
 visual identity, and related materials—is proprietary and remains the exclusive
 property of its respective rights holders.
 
+## Licence
+
 Public access to this repository or its deployed content does not grant any
 licence or permission to copy, modify, reproduce, distribute, publish,
 sublicence, create derivative works from, or otherwise use its contents for any
 commercial or non-commercial purpose.
+
+## Permissions
 
 Any third-party use requires prior written authorization from the applicable
 rights holder. To request authorization, contact Eric Guitard at

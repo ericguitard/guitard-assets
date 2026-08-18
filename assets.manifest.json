@@ -11,9 +11,10 @@
   },
   "cacheVariants": ["css/style.css?v=20260816-1"],
   "nonPublicPaths": [
+    ".github/workflows/deploy.yml",
+    "scripts/validate-live.mjs",
     ".gitignore",
     ".htmlvalidate.json",
-    ".github/workflows/deploy.yml",
     "DEPLOYMENT.md",
     "README.md",
     "RIGHTS.md",
@@ -22,13 +23,12 @@
     "assets.manifest.json",
     "package.json",
     "pnpm-lock.yaml",
-    "scripts/validate-live.mjs",
     "stylelint.config.mjs"
   ],
   "headers": {
     "accessControlAllowOrigin": "*",
     "crossOriginResourcePolicy": "cross-origin",
-    "contentSecurityPolicy": "default-src 'none'; script-src https://static.cloudflareinsights.com; script-src-attr 'none'; connect-src 'self'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+    "contentSecurityPolicy": "default-src 'none'; script-src 'none'; script-src-attr 'none'; connect-src 'none'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
     "xContentTypeOptions": "nosniff"
   },
   "errorDocument": {
