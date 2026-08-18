@@ -16,7 +16,7 @@ The repository is published through GitHub Pages and proxied by Cloudflare. It i
 - Favicons, application icons, and maskable icons
 - Open Graph and social preview images
 - Responsive screenshot images
-- Custom missing-asset 404 page and stylesheet
+- Custom protocol-endpoint `404` page and stylesheet
 - Manifest-driven local, deployment, and production validation
 - Header documentation and gated GitHub Pages deployment
 
