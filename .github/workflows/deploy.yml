@@ -1,16 +1,26 @@
-name: Validate
+name: Deploy production
 
 on:
-  pull_request:
-  workflow_call:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: pages-production
+  cancel-in-progress: false
+
 jobs:
   validate:
-    name: Validate repository
+    name: Validate before deployment
+    uses: ./.github/workflows/validate.yml
+
+  package:
+    name: Package Pages artifact
+    needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -23,11 +33,65 @@ jobs:
         with:
           node-version: 24
 
-      - name: Install pnpm
-        run: npm install --global pnpm@11.19.0
+      - name: Stage declared public files
+        env:
+          DEPLOYMENT_SHA: ${{ github.sha }}
+        run: node scripts/stage-pages.mjs
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: .pages
+          include-hidden-files: true
 
-      - name: Validate asset repository
-        run: pnpm run check
+  deploy:
+    name: Deploy GitHub Pages
+    needs: package
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+      pages: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy artifact
+        id: deployment
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+
+  verify:
+    name: Purge and validate production
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ZONE_ID: ${{ vars.CLOUDFLARE_ZONE_ID }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+
+      - name: Purge exact Cloudflare URLs
+        if: env.CLOUDFLARE_API_TOKEN != '' && env.CLOUDFLARE_ZONE_ID != ''
+        run: node scripts/purge-cloudflare.mjs
+
+      - name: Note skipped Cloudflare purge
+        if: env.CLOUDFLARE_API_TOKEN == '' || env.CLOUDFLARE_ZONE_ID == ''
+        run: echo "Cloudflare purge skipped because its repository secret or variable is missing."
+
+      - name: Validate deployed origin
+        env:
+          EXPECTED_DEPLOYMENT_SHA: ${{ github.sha }}
+          LIVE_VALIDATE_ATTEMPTS: 6
+          LIVE_VALIDATE_DELAY_MS: 10000
+        run: node scripts/validate-live.mjs

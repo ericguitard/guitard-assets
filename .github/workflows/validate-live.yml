@@ -29,6 +29,7 @@ jobs:
 
       - name: Validate production asset origin
         env:
+          EXPECTED_DEPLOYMENT_SHA: ${{ github.sha }}
           LIVE_VALIDATE_ATTEMPTS: 3
           LIVE_VALIDATE_DELAY_MS: 10000
         run: node scripts/validate-live.mjs
