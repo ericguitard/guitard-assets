@@ -119,50 +119,86 @@ Confirm the following existing settings:
 Keep or create a 301 redirect rule:
 
 ```text
-(http.host eq "assets.guitard.ca" and http.request.uri.path eq "/")
+lower(http.host) eq "assets.guitard.ca"
+and http.request.method in {"GET" "HEAD"}
+and http.request.uri.path eq "/"
 ```
 
-Redirect to `https://guitard.ca/`.
+Redirect to `https://guitard.ca/` and do not preserve the query string.
 
-### Common response headers
+### Content security policy
 
-Create a Response Header Transform Rule matching:
-
-```text
-(http.host eq "assets.guitard.ca")
-```
-
-Use **Set static** for these headers:
-
-| Header | Value |
-| --- | --- |
-| `Access-Control-Allow-Origin` | `*` |
-| `Cross-Origin-Resource-Policy` | `cross-origin` |
-| `Content-Security-Policy` | `default-src 'none'; script-src 'none'; script-src-attr 'none'; connect-src 'none'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'` |
-| `X-Content-Type-Options` | `nosniff` |
-
-### Custom 404 response
-
-Create a later Response Header Transform Rule matching:
+Create a Response Header Transform Rule named
+`assets.guitard.ca content security policy` matching:
 
 ```text
-(http.host eq "assets.guitard.ca" and http.response.code eq 404)
+lower(http.host) eq "assets.guitard.ca"
 ```
 
 Use **Set static** for:
 
 | Header | Value |
 | --- | --- |
+| `Content-Security-Policy` | `default-src 'none'; script-src 'none'; script-src-attr 'none'; connect-src 'none'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'` |
+
+Keep this rule scoped to the hostname so the policy applies to successful,
+redirect, and error responses.
+
+### Successful asset response headers
+
+Create a later Response Header Transform Rule named
+`assets.guitard.ca response headers` matching:
+
+```text
+lower(http.host) eq "assets.guitard.ca"
+and http.request.method in {"GET" "HEAD"}
+and http.response.code in {200 206 304}
+```
+
+Use **Set static** for:
+
+| Header | Value |
+| --- | --- |
+| `Access-Control-Allow-Origin` | `*` |
+| `Cross-Origin-Resource-Policy` | `cross-origin` |
+| `X-Content-Type-Options` | `nosniff` |
+
+### Custom 404 response
+
+Create a later Response Header Transform Rule named
+`assets.guitard.ca 404 headers` matching:
+
+```text
+lower(http.host) eq "assets.guitard.ca"
+and http.request.method in {"GET" "HEAD"}
+and http.response.code in {404}
+```
+
+Use **Set static** for:
+
+| Header | Value |
+| --- | --- |
+| `Access-Control-Allow-Origin` | `*` |
 | `Cache-Control` | `max-age=600` |
 | `Content-Type` | `text/html; charset=utf-8` |
+| `Cross-Origin-Resource-Policy` | `same-site` |
 | `Referrer-Policy` | `no-referrer` |
+| `X-Content-Type-Options` | `nosniff` |
 | `X-Frame-Options` | `DENY` |
 | `X-Robots-Tag` | `noindex, nofollow` |
 
-Place this rule after the common response-header rule so its values take
-precedence. On plans supporting Cache Response Rules, also set the 404 edge TTL
-to 600 seconds. On other plans, the deployment purge removes newly created asset
-URLs from Cloudflare's edge cache.
+Keep the three asset-specific Response Header Transform Rules in this order:
+
+1. `assets.guitard.ca content security policy`
+2. `assets.guitard.ca response headers`
+3. `assets.guitard.ca 404 headers`
+
+Later matching Transform Rules can overwrite values set by earlier rules. This
+order keeps the content security policy on every response, assigns cross-origin
+delivery headers to successful assets, and makes the custom 404 response
+self-contained. On plans supporting Cache Response Rules, also set the 404 edge
+TTL to 600 seconds. On other plans, the deployment purge removes newly created
+asset URLs from Cloudflare's edge cache.
 
 ### Asset cache policy
 
