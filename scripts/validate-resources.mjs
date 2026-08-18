@@ -93,7 +93,7 @@ if (
   failures.push("favicon.ico does not contain a valid ICO directory");
 }
 
-for (const file of ["favicon.svg", "bimi-logo.svg"]) {
+for (const file of ["bimi-logo.svg", "favicon.svg"]) {
   const svg = await readFile(path.join(root, file), "utf8");
   if (!/<svg\b/i.test(svg) || !/<title\b/i.test(svg)) {
     failures.push(`${file} must contain an SVG root and accessible title`);
