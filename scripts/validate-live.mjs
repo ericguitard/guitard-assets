@@ -33,12 +33,12 @@ if (rootResponse.status !== 301) {
 expectHeader(rootResponse, "location", "https://guitard.ca/", "/");
 
 const assets = [
-  ["/favicon.svg", "image/svg+xml"],
-  ["/favicon.ico", "image/vnd.microsoft.icon"],
-  ["/og-image.png", "image/png"],
-  ["/bimi-logo.svg", "image/svg+xml"],
-  ["/robots.txt", "text/plain; charset=utf-8"],
   ["/css/style.css", "text/css; charset=utf-8"],
+  ["/favicon.ico", "image/vnd.microsoft.icon"],
+  ["/favicon.svg", "image/svg+xml"],
+  ["/bimi-logo.svg", "image/svg+xml"],
+  ["/og-image.png", "image/png"],
+  ["/robots.txt", "text/plain; charset=utf-8"],
 ];
 
 for (const [pathname, contentType] of assets) {
@@ -74,7 +74,7 @@ if (missingResponse.status !== 404) {
     missingPath,
   );
   const missingHtml = await missingResponse.text();
-  if (!missingHtml.includes("Image Not Found.")) {
+  if (!missingHtml.includes("Image Not Found")) {
     failures.push(`${missingPath}: custom 404 page content was not returned`);
   }
 }
