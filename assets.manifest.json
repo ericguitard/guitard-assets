@@ -24,6 +24,11 @@
   },
   "resources": [
     {
+      "path": "css/style.css",
+      "contentType": "text/css; charset=utf-8",
+      "cacheControl": "max-age=14400"
+    },
+    {
       "path": "android-chrome-192x192.png",
       "contentType": "image/png",
       "cacheControl": "max-age=14400",
@@ -63,11 +68,6 @@
       "contentType": "image/svg+xml",
       "cacheControl": "max-age=14400",
       "profile": "bimi-tiny-ps"
-    },
-    {
-      "path": "css/style.css",
-      "contentType": "text/css; charset=utf-8",
-      "cacheControl": "max-age=14400"
     },
     {
       "path": "favicon-16x16.png",
