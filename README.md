@@ -1,7 +1,5 @@
 # guitard.ca — Static Assets
 
-> ⚠️ **Proprietary content.** Public access does not grant any licence to use these materials. See [Licence Notice](#licence-notice).
-
 ---
 
 ## About
@@ -27,36 +25,8 @@ The repository is published through GitHub Pages and proxied by Cloudflare. It i
 
 ---
 
-## Validation and Deployment
+## Authoritative Documentation
 
-`assets.manifest.json` is the source of truth for every published resource, its
-MIME type, cache policy, and expected image dimensions. Pull requests run the
-repository checks, while the production workflow validates the repository,
-packages only declared public files, deploys to GitHub Pages, and smoke-tests the
-Cloudflare-proxied origin. Each release also publishes `deployment.json` with the
-exact Git commit so the monitor can detect a stale deployment, and it verifies
-that repository code and documentation remain unavailable from the asset host.
-
-Run `pnpm run check` for repository validation, `pnpm run stage:pages` to preview
-the Pages artifact, and `pnpm run validate:live` to test production.
-
-Security concerns should be reported according to [SECURITY.md](SECURITY.md).
-Maintainer setup and release instructions are in [DEPLOYMENT.md](DEPLOYMENT.md).
-
----
-
-## Licence Notice
-
-The complete proprietary rights notice is available in [RIGHTS.md](RIGHTS.md).
-
-All content in this repository—including source code, configuration files, documentation, text, designs, images, names, logos, trademarks, branding, visual identity, and related materials—is proprietary and remains the exclusive property of its respective rights holders.
-
-Access to this repository or its deployed content does not grant any licence or permission to copy, modify, reproduce, distribute, publish, sublicence, create derivative works from, or otherwise use its contents for any commercial or non-commercial purpose.
-
-Any third-party use requires prior written authorization from the applicable rights holder.
-
-**All rights reserved.**
-
-## Permissions
-
-To request authorization to use an asset or other repository content, contact Eric Guitard at [eric@guitard.ca](mailto:eric@guitard.ca).
+- [Deployment and validation](DEPLOYMENT.md)
+- [Security policy](SECURITY.md)
+- [Rights, licence, and permissions](RIGHTS.md)
