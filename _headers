@@ -11,9 +11,15 @@
 /404.html
   Content-Type: text/html; charset=utf-8
   Cache-Control: max-age=600
+  Cross-Origin-Resource-Policy: same-site
   Referrer-Policy: no-referrer
   X-Frame-Options: DENY
   X-Robots-Tag: noindex, nofollow
+
+# Each deployment publishes its exact Git commit so production freshness can be monitored.
+/deployment.json
+  Content-Type: application/json; charset=utf-8
+  Cache-Control: max-age=14400
 
 # The error-page stylesheet uses a query-string version and the same four-hour browser lifetime currently delivered by production asset responses.
 /css/*.css

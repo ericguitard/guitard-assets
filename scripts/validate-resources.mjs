@@ -141,6 +141,22 @@ if (manifest.origin !== "https://assets.guitard.ca") {
   fail("assets.manifest.json origin must be https://assets.guitard.ca");
 }
 
+if (!isSafeRelativePath(manifest.deploymentMarker?.path)) {
+  fail("assets.manifest.json must declare a safe deploymentMarker.path");
+}
+if (
+  typeof manifest.deploymentMarker?.contentType !== "string" ||
+  !manifest.deploymentMarker.contentType
+) {
+  fail("assets.manifest.json must declare deploymentMarker.contentType");
+}
+if (
+  typeof manifest.deploymentMarker?.cacheControl !== "string" ||
+  !manifest.deploymentMarker.cacheControl
+) {
+  fail("assets.manifest.json must declare deploymentMarker.cacheControl");
+}
+
 const resourcePaths = new Set();
 for (const resource of manifest.resources ?? []) {
   if (!isSafeRelativePath(resource.path)) {
@@ -178,6 +194,36 @@ for (const resource of manifest.resources ?? []) {
 for (const relativePath of manifest.siteFiles ?? []) {
   if (!isSafeRelativePath(relativePath) || !(await isFile(relativePath))) {
     fail(`Site file is missing or unsafe: ${JSON.stringify(relativePath)}`);
+  }
+}
+
+const publicPaths = new Set([
+  ...(manifest.siteFiles ?? []),
+  ...resourcePaths,
+  manifest.deploymentMarker?.path,
+]);
+for (const relativePath of manifest.nonPublicPaths ?? []) {
+  if (!isSafeRelativePath(relativePath)) {
+    fail(`Non-public path is unsafe: ${JSON.stringify(relativePath)}`);
+  } else if (publicPaths.has(relativePath)) {
+    fail(`Non-public path is also published: ${relativePath}`);
+  } else if (!(await isFile(relativePath))) {
+    fail(`Non-public verification file is missing: ${relativePath}`);
+  }
+}
+
+for (const cacheVariant of manifest.cacheVariants ?? []) {
+  if (
+    typeof cacheVariant !== "string" ||
+    cacheVariant.includes("#") ||
+    !cacheVariant.includes("?")
+  ) {
+    fail(`Cache variant is invalid: ${JSON.stringify(cacheVariant)}`);
+    continue;
+  }
+  const [relativePath] = cacheVariant.split("?", 1);
+  if (!isSafeRelativePath(relativePath) || !resourcePaths.has(relativePath)) {
+    fail(`Cache variant does not reference a public resource: ${cacheVariant}`);
   }
 }
 
@@ -256,6 +302,9 @@ for (const value of [
   `X-Content-Type-Options: ${manifest.headers.xContentTypeOptions}`,
   `Cache-Control: ${manifest.errorDocument.cacheControl}`,
   `Content-Type: ${manifest.errorDocument.contentType}`,
+  `Cross-Origin-Resource-Policy: ${manifest.errorDocument.crossOriginResourcePolicy}`,
+  `Cache-Control: ${manifest.deploymentMarker.cacheControl}`,
+  `Content-Type: ${manifest.deploymentMarker.contentType}`,
 ]) {
   if (!headers.includes(value)) fail(`_headers is missing ${value}`);
 }
