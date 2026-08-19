@@ -96,7 +96,7 @@ Confirm the following existing settings:
 
 ### Redirect Rules
 
-Keep or create a 301 redirect rule named `assets.guitard.ca redirect` matching:
+Keep or create a 301 redirect rule named `assets.guitard.ca (redirect)` matching:
 
 ```text
 lower(http.host) eq "assets.guitard.ca"
@@ -108,7 +108,7 @@ Redirect to `https://guitard.ca/` and do not preserve the query string.
 
 ### Response Header Transform Rules - Content Security Policy
 
-Create a Response Header Transform Rule named `assets.guitard.ca content security policy` matching:
+Create a Response Header Transform Rule named `assets.guitard.ca (content security policy)` matching:
 
 ```text
 lower(http.host) eq "assets.guitard.ca"
@@ -124,7 +124,7 @@ Keep this rule scoped to the hostname so the policy applies to successful, redir
 
 ### Response Header Transform Rules - Response Headers
 
-Create a later Response Header Transform Rule named `assets.guitard.ca response headers` matching:
+Create a later Response Header Transform Rule named `assets.guitard.ca (response headers)` matching:
 
 ```text
 lower(http.host) eq "assets.guitard.ca"
@@ -142,7 +142,7 @@ Use **Set static** for:
 
 ### Response Header Transform Rules - 404 Headers
 
-Create a later Response Header Transform Rule named `assets.guitard.ca 404 headers` matching:
+Create a later Response Header Transform Rule named `assets.guitard.ca (404 headers)` matching:
 
 ```text
 lower(http.host) eq "assets.guitard.ca"
