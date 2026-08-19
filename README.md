@@ -20,8 +20,6 @@ The repository is published through GitHub Pages and proxied by Cloudflare. It i
 - Manifest-driven local, deployment, and production validation
 - Header documentation and gated GitHub Pages deployment
 
-*(Structure may change without notice.)*
-
 ---
 
 ## Authoritative Documentation
