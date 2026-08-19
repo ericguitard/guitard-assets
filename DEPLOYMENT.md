@@ -19,8 +19,8 @@ This guide configures `guitard-assets` so that pull requests are validated, prod
    pnpm run stage:pages
    ```
 
-5. Confirm that `.pages` contains only the 20 expected files: 19 declared public files plus the generated `deployment.json` commit marker.
-6. Confirm the `Validate / Validate repository` check runs automatically.
+5. Open a pull request for the web-upload branch.
+6. Confirm the `Validate / Validate repository` check runs automatically and succeeds.
 
 ## 2. Configure the GitHub Pages source
 
