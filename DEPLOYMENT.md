@@ -155,7 +155,7 @@ Use **Set static** for:
 | Header | Value |
 | --- | --- |
 | `Access-Control-Allow-Origin` | `*` |
-| `Cache-Control` | `max-age=600` |
+| `Cache-Control` | `max-age=600, no-transform` |
 | `Content-Type` | `text/html; charset=utf-8` |
 | `Cross-Origin-Resource-Policy` | `same-site` |
 | `Referrer-Policy` | `no-referrer` |
