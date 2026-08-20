@@ -10,7 +10,7 @@
 # Unknown asset addresses use the custom image-focused error document.
 /404.html
   Content-Type: text/html; charset=utf-8
-  Cache-Control: max-age=600
+  Cache-Control: max-age=600, no-transform
   Cross-Origin-Resource-Policy: same-site
   Referrer-Policy: no-referrer
   X-Frame-Options: DENY
