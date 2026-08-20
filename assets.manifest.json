@@ -34,7 +34,7 @@
   "errorDocument": {
     "path": "404.html",
     "contentType": "text/html; charset=utf-8",
-    "cacheControl": "max-age=600",
+    "cacheControl": "max-age=600, no-transform",
     "crossOriginResourcePolicy": "same-site",
     "marker": "Image Not Found"
   },
