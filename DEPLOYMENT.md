@@ -9,9 +9,8 @@ This guide configures `guitard-assets` so that pull requests are validated, prod
 ## 1. Prepare and Validate
 
 1. On GitHub, upload the changed files to a new branch created from the current `main` branch. GitHub web commits are signed by GitHub and satisfy the signed commit rule.
-2. Open a pull request for the web-upload branch.
-3. Install Node.js 24 and pnpm 11.19.0.
-4. Run:
+2. Install Node.js 24 and pnpm 11.19.0.
+3. Run:
 
    ```text
    pnpm install --frozen-lockfile
@@ -19,8 +18,8 @@ This guide configures `guitard-assets` so that pull requests are validated, prod
    pnpm run stage:pages
    ```
 
-5. Open a pull request for the web-upload branch.
-6. Confirm the `Validate / Validate repository` check runs automatically and succeeds.
+4. Open a pull request for the web-upload branch.
+5. Confirm the `Validate / Validate repository` check runs automatically and succeeds.
 
 ## 2. Configure the GitHub Pages source
 
