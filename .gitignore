@@ -146,4 +146,10 @@ dist
 # Vite files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+.vite/
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
 .vite
