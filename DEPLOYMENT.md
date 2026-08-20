@@ -170,6 +170,8 @@ Keep the three asset-specific Response Header Transform Rules in this order:
 
 Later matching Transform Rules can overwrite values set by earlier rules. This order keeps the content security policy on every response, assigns cross-origin delivery headers to successful assets, and makes the custom 404 response self-contained. On plans supporting Cache Response Rules, also set the 404 edge TTL to 600 seconds. On other plans, the deployment purge removes newly created asset URLs from Cloudflare's edge cache.
 
+Keep **Web Analytics → Automatic Setup** disabled for the `guitard.ca` zone. Automatic setup injects a JavaScript beacon into HTML responses on every subdomain, which conflicts with the intentionally script-free asset-host CSP. If browser-based Web Analytics is needed on the main website, use manual setup on `guitard.ca` only. The `no-transform` directive on the custom 404 response also prevents Cloudflare JavaScript Detections and other intermediary body transformations from modifying the error document.
+
 ### Asset Cache Policy
 
 Keep the Cloudflare browser cache lifetime at four hours for stable asset names. The later 404 response rule overrides the visitor-facing error cache header to 10 minutes. If Cache Response Rules are available, use one to align the 404 edge TTL with the same 10-minute policy.
