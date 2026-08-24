@@ -236,4 +236,3 @@ If the custom deployment fails after merge:
 2. Run **Deploy production** manually on the reverted `main` branch.
 3. If necessary, temporarily switch **Settings → Pages → Source** back to deployment from `main` while investigating.
 4. Purge the affected Cloudflare URLs after the rollback deploys.
-
