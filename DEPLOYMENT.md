@@ -154,7 +154,7 @@ Use **Set static** for:
 | Header | Value |
 | --- | --- |
 | `Access-Control-Allow-Origin` | `*` |
-| `Cache-Control` | `max-age=600` |
+| `Cache-Control` | `max-age=600, no-transform` |
 | `Content-Type` | `text/html; charset=utf-8` |
 | `Cross-Origin-Resource-Policy` | `same-site` |
 | `Referrer-Policy` | `no-referrer` |
@@ -212,7 +212,7 @@ Issues may remain disabled because `SECURITY.md` provides a private reporting ch
 
 4. Confirm the Cloudflare purge step ran when the token and zone variable were configured.
 5. Run **Actions → Validate production → Run workflow** once manually.
-6. Confirm the workflow validates the exact deployment commit, all 16 resources, all 13 non-public paths, content equality, HTTP and HTTPS behavior, TLS lifetime, HSTS, MIME types, cache headers, CORS, CSP, and the exact custom 404 response.
+6. Confirm the workflow validates the exact deployment commit, all 16 resources, all 13 non-public paths, content equality, representative `GET` and `HEAD` behavior, HTTP-to-HTTPS and root redirects, redirect CSP/HSTS, TLS lifetime, MIME types, cache headers, CORS, CSP, and the exact custom 404 response.
 
 The scheduled monitor then runs daily at 11:27 UTC. GitHub may delay scheduled workflows during periods of high load, so the post-deployment smoke test remains the primary release check.
 
@@ -236,3 +236,4 @@ If the custom deployment fails after merge:
 2. Run **Deploy production** manually on the reverted `main` branch.
 3. If necessary, temporarily switch **Settings → Pages → Source** back to deployment from `main` while investigating.
 4. Purge the affected Cloudflare URLs after the rollback deploys.
+
