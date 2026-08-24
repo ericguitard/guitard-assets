@@ -28,8 +28,9 @@ function isTextResource(resource) {
   );
 }
 
-async function request(base, pathname) {
+async function request(base, pathname, method = "GET") {
   return fetch(new URL(pathname, base), {
+    method,
     redirect: "manual",
     headers: {
       "Cache-Control": "no-cache",
@@ -156,7 +157,7 @@ async function validateErrorResponse(
   pathname,
   expectedHtml,
   failures,
-  requireExactBody = false,
+  { requireExactBody = false, requireEmptyBody = false } = {},
 ) {
   if (response.status !== 404) {
     failures.push(`${pathname}: expected 404, found ${response.status}`);
@@ -215,9 +216,36 @@ async function validateErrorResponse(
   );
   validateHsts(response, pathname, failures);
 
-  const missingHtml = normalizedText(Buffer.from(await response.arrayBuffer()));
+  const missingData = Buffer.from(await response.arrayBuffer());
+  if (requireEmptyBody && missingData.length !== 0) {
+    failures.push(`${pathname}: HEAD response must not include a body`);
+  }
+  const missingHtml = normalizedText(missingData);
   if (requireExactBody && missingHtml !== expectedHtml) {
     failures.push(`${pathname}: custom 404 body does not match 404.html`);
+  }
+}
+
+async function validateHeadResponse(
+  response,
+  pathname,
+  contentType,
+  cacheControl,
+  failures,
+) {
+  if (response.status !== 200) {
+    failures.push(
+      `${pathname} with HEAD: expected 200, found ${response.status}`,
+    );
+    return;
+  }
+  expectHeader(response, "content-type", contentType, pathname, failures);
+  expectHeader(response, "cache-control", cacheControl, pathname, failures);
+  validateCommonHeaders(response, pathname, failures);
+
+  const body = await response.arrayBuffer();
+  if (body.byteLength !== 0) {
+    failures.push(`${pathname}: HEAD response must not include a body`);
   }
 }
 
@@ -239,6 +267,14 @@ async function validateOnce() {
     failures.push(`/: expected 301, found ${rootResponse.status}`);
   }
   expectHeader(rootResponse, "location", manifest.rootRedirect, "/", failures);
+  expectHeader(
+    rootResponse,
+    "content-security-policy",
+    manifest.headers.contentSecurityPolicy,
+    "/",
+    failures,
+  );
+  validateHsts(rootResponse, "/", failures);
 
   const redirectPath = `/${manifest.resources[0].path}`;
   const httpOrigin = new URL(manifest.origin);
@@ -348,6 +384,36 @@ async function validateOnce() {
     }
   }
 
+  const headResourcePaths = ["favicon.svg", "favicon-32x32.png", "robots.txt"];
+  for (const relativePath of headResourcePaths) {
+    const resource = manifest.resources.find(
+      (candidate) => candidate.path === relativePath,
+    );
+    if (!resource) {
+      failures.push(
+        `HEAD validation target is missing from the manifest: ${relativePath}`,
+      );
+      continue;
+    }
+    const pathname = `/${relativePath}`;
+    await validateHeadResponse(
+      await request(origin, pathname, "HEAD"),
+      pathname,
+      resource.contentType,
+      resource.cacheControl,
+      failures,
+    );
+  }
+
+  const markerHeadPath = `/${manifest.deploymentMarker.path}`;
+  await validateHeadResponse(
+    await request(origin, markerHeadPath, "HEAD"),
+    markerHeadPath,
+    manifest.deploymentMarker.contentType,
+    manifest.deploymentMarker.cacheControl,
+    failures,
+  );
+
   const missingPath = `/missing-asset-${Date.now()}.png`;
   const missingResponse = await request(origin, missingPath);
   await validateErrorResponse(
@@ -355,7 +421,15 @@ async function validateOnce() {
     missingPath,
     expectedErrorHtml,
     failures,
-    true,
+    { requireExactBody: true },
+  );
+
+  await validateErrorResponse(
+    await request(origin, missingPath, "HEAD"),
+    missingPath,
+    expectedErrorHtml,
+    failures,
+    { requireEmptyBody: true },
   );
 
   for (const relativePath of manifest.nonPublicPaths) {
@@ -394,6 +468,6 @@ if (finalFailures.length) {
   process.exitCode = 1;
 } else {
   console.log(
-    `Validated production freshness, ${manifest.resources.length} live resources, ${manifest.nonPublicPaths.length} non-public paths, deployed content, redirects, TLS, HSTS, MIME types, caching, CORS, CSP, and the custom 404.`,
+    `Validated production freshness, ${manifest.resources.length} live resources, ${manifest.nonPublicPaths.length} non-public paths, deployed content, GET and HEAD behavior, redirects, TLS, HSTS, MIME types, caching, CORS, CSP, and the custom 404.`,
   );
 }
