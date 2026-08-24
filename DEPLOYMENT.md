@@ -168,13 +168,13 @@ Keep the three asset-specific Response Header Transform Rules in this order:
 2. `assets.guitard.ca response headers`
 3. `assets.guitard.ca 404 headers`
 
-Later matching Transform Rules can overwrite values set by earlier rules. This order keeps the content security policy on every response, assigns cross-origin delivery headers to successful assets, and makes the custom 404 response self-contained. On plans supporting Cache Response Rules, also set the 404 edge TTL to 600 seconds. On other plans, the deployment purge removes newly created asset URLs from Cloudflare's edge cache.
+Later matching Transform Rules can overwrite values set by earlier rules. This order keeps the content security policy on every response, assigns cross-origin delivery headers to successful assets, and makes the custom 404 response self-contained. The `Cache-Control` value in the 404 rule controls the visitor-facing response header only; Response Header Transform Rules run after Cloudflare makes its edge-cache decision.
 
 Keep **Web Analytics → Automatic Setup** disabled for the `guitard.ca` zone. Automatic setup injects a JavaScript beacon into HTML responses on every subdomain, which conflicts with the intentionally script-free asset-host CSP. If browser-based Web Analytics is needed on the main website, use manual setup on `guitard.ca` only. The `no-transform` directive on the custom 404 response also prevents Cloudflare JavaScript Detections and other intermediary body transformations from modifying the error document.
 
 ### Asset Cache Policy
 
-Keep the Cloudflare browser cache lifetime at four hours for stable asset names. The later 404 response rule overrides the visitor-facing error cache header to 10 minutes. If Cache Response Rules are available, use one to align the 404 edge TTL with the same 10-minute policy.
+Keep the Cloudflare browser cache lifetime at four hours for stable asset names. The later 404 response rule overrides the visitor-facing error cache header to 10 minutes. On the Free plan, do not configure a matching 10-minute Edge Cache TTL: the minimum explicit Edge Cache TTL is two hours. Leave 404 edge behavior to origin cache control. When a previously missing URL is published as an asset, the deployment's targeted purge removes the cached miss. See Cloudflare's [Edge and Browser Cache TTL](https://developers.cloudflare.com/cache/how-to/edge-browser-cache-ttl/) and [Response Header Transform Rules](https://developers.cloudflare.com/rules/transform/response-header-modification/) documentation.
 
 After changing rules, purge the affected URLs or purge the `assets.guitard.ca` hostname once.
 
