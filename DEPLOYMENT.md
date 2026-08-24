@@ -9,7 +9,7 @@ This guide configures `guitard-assets` so that pull requests are validated, prod
 ## 1. Prepare and Validate
 
 1. On GitHub, upload the changed files to a new branch created from the current `main` branch. GitHub web commits are signed by GitHub and satisfy the signed commit rule.
-2. Install Node.js 24 and pnpm 11.19.0.
+2. Install Node.js 24 and pnpm 11.23.0.
 3. Run:
 
    ```text
