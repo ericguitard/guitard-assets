@@ -12,7 +12,11 @@
   "cacheVariants": ["css/style.css?v=20260816-1"],
   "nonPublicPaths": [
     ".github/workflows/deploy.yml",
+    "scripts/purge-cloudflare.mjs",
+    "scripts/stage-pages.mjs",
+    "scripts/stage-pages.test.mjs",
     "scripts/validate-live.mjs",
+    "scripts/validate-resources.mjs",
     ".gitignore",
     ".htmlvalidate.json",
     "DEPLOYMENT.md",
@@ -29,6 +33,7 @@
     "accessControlAllowOrigin": "*",
     "crossOriginResourcePolicy": "cross-origin",
     "contentSecurityPolicy": "default-src 'none'; script-src 'none'; script-src-attr 'none'; connect-src 'none'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+    "permissionsPolicy": "accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), serial=(), usb=(), web-share=(), xr-spatial-tracking=()",
     "xContentTypeOptions": "nosniff"
   },
   "errorDocument": {
