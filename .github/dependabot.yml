@@ -1,11 +1,12 @@
 version: 2
+
 updates:
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: weekly
       day: monday
-      time: "08:30"
+      time: "09:00"
       timezone: America/Toronto
     open-pull-requests-limit: 5
 
@@ -14,6 +15,6 @@ updates:
     schedule:
       interval: weekly
       day: monday
-      time: "08:45"
+      time: "09:15"
       timezone: America/Toronto
     open-pull-requests-limit: 5
