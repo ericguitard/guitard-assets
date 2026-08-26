@@ -205,6 +205,13 @@ async function validateErrorResponse(
     pathname,
     failures,
   );
+  expectHeader(
+    response,
+    "permissions-policy",
+    manifest.headers.permissionsPolicy,
+    pathname,
+    failures,
+  );
   expectHeader(response, "referrer-policy", "no-referrer", pathname, failures);
   expectHeader(response, "x-frame-options", "DENY", pathname, failures);
   expectHeader(
@@ -271,6 +278,13 @@ async function validateOnce() {
     rootResponse,
     "content-security-policy",
     manifest.headers.contentSecurityPolicy,
+    "/",
+    failures,
+  );
+  expectHeader(
+    rootResponse,
+    "permissions-policy",
+    manifest.headers.permissionsPolicy,
     "/",
     failures,
   );

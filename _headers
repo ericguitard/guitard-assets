@@ -4,7 +4,7 @@
 #
 # Two consequences of the current split:
 #   1. Any change to the /* or /404.html blocks below that must reach production requires a matching change in the Cloudflare Transform rules. `validate-live.mjs` in .github/workflows/validate-live.yml compares live response headers against this specification and will flag drift on the next scheduled run.
-#   2. Cache-Control rules for /css/*.css, /*.jpg, /*.png, /*.svg, /favicon.ico, and /robots.txt describe intent only. Production currently serves whatever GitHub Pages defaults to for those paths, because no Cloudflare Transform rule targets them today.
+#   2. Cache-Control rules for /css/*.css, /*.jpg, /*.png, /*.svg, /favicon.ico, and /robots.txt document the four-hour browser lifetime enforced in production by Cloudflare's Browser Cache TTL. Keep that Cloudflare setting and these values aligned.
 
 # Every published resource is intentionally usable across origins, including favicons, social previews, and the BIMI image retrieved by email clients.
 /*
