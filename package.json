@@ -18,7 +18,7 @@
     "check": "pnpm run validate:format && pnpm run validate:html && pnpm run validate:css && pnpm run validate:js && pnpm run validate:tests && pnpm run validate:resources && pnpm run validate:dependencies"
   },
   "devDependencies": {
-    "html-validate": "11.9.0",
+    "html-validate": "11.10.0",
     "prettier": "3.9.6",
     "stylelint": "17.14.1"
   }
