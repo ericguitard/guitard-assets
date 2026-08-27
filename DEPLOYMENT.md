@@ -6,7 +6,7 @@ This document is the single source of truth for validation, release, hosting con
 
 This guide configures `guitard-assets` so that pull requests are validated, production deploys only after validation, Cloudflare is purged after deployment, and the public origin is smoke-tested after every release and once per day.
 
-## 1. Prepare and Validate
+## 1. Prepare and Validate a Change
 
 1. On GitHub, upload the changed files to a new branch created from the current `main` branch. GitHub web commits are signed by GitHub and satisfy the signed commit rule.
 2. Install Node.js 24 and pnpm 11.23.0.
