@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       html-validate:
-        specifier: 11.10.0
-        version: 11.10.0
+        specifier: 11.13.0
+        version: 11.13.0
       prettier:
         specifier: 3.9.6
         version: 3.9.6
@@ -268,8 +268,8 @@ packages:
     resolution: {integrity: sha512-n6l5uca7/y5joxZ3LUePhzmBFUJ+U2YWzhMa8XUTecSeSlQiZdF5XAd/Q3/WUl0VsXgUwWi8I7CNIwdI5WN1SQ==}
     engines: {node: '>=20.10'}
 
-  html-validate@11.10.0:
-    resolution: {integrity: sha512-IqQ8yZl4jzjXrx+M1XXPmpN4DkvKfHHM8pIL3Z3UUpFeckc4YUSrrWEDJ94i19txKtR9NK+g2UZEKeE0TnbNjQ==}
+  html-validate@11.13.0:
+    resolution: {integrity: sha512-+D/OzRlO1500q7N5Zq6TElX/HUmclqpKVh4B8z3ko1121I09i2fOrdiuYnufBOAFw85ex5cprn2fOZpzA41Utg==}
     engines: {node: ^22.22.0 || >= 24.8.0}
     hasBin: true
     peerDependencies:
@@ -758,7 +758,7 @@ snapshots:
 
   html-tags@5.1.0: {}
 
-  html-validate@11.10.0:
+  html-validate@11.13.0:
     dependencies:
       '@html-validate/stylish': 6.0.0
       '@sidvind/better-ajv-errors': 7.0.0(ajv@8.20.0)
