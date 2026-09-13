@@ -20,6 +20,6 @@
   "devDependencies": {
     "html-validate": "11.13.0",
     "prettier": "3.9.6",
-    "stylelint": "17.14.1"
+    "stylelint": "17.15.0"
   }
 }
