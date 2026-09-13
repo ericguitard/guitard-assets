@@ -1,0 +1,56 @@
+name: Merge validated Dependabot updates
+
+on:
+  workflow_run:
+    workflows: ["Validate"]
+    types: [completed]
+
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+
+jobs:
+  merge:
+    name: Merge safe update
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.actor.login == 'dependabot[bot]' &&
+      github.event.workflow_run.pull_requests[0].number != null
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Merge the validated update
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          PR_NUMBER: ${{ github.event.workflow_run.pull_requests[0].number }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          pr_json="$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER")"
+          author="$(jq -r '.user.login' <<<"$pr_json")"
+          base_ref="$(jq -r '.base.ref' <<<"$pr_json")"
+          head_ref="$(jq -r '.head.ref' <<<"$pr_json")"
+          head_sha="$(jq -r '.head.sha' <<<"$pr_json")"
+          state="$(jq -r '.state' <<<"$pr_json")"
+
+          if [[ "$author" != "dependabot[bot]" || "$base_ref" != "main" || "$state" != "open" || "$head_sha" != "$HEAD_SHA" ]]; then
+            echo "The pull request no longer matches the validated Dependabot update."
+            exit 1
+          fi
+
+          case "$head_ref" in
+            dependabot/npm_and_yarn/npm-minor-and-patch-*|dependabot/npm_and_yarn/npm-security-updates-*|dependabot/github_actions/github-actions-minor-and-patch-*|dependabot/github_actions/github-actions-security-updates-*)
+              ;;
+            *)
+              echo "Leaving a major version update for manual review: $head_ref"
+              exit 0
+              ;;
+          esac
+
+          gh pr merge "$PR_NUMBER" --repo "$REPOSITORY" --squash --delete-branch
+          gh workflow run deploy.yml --repo "$REPOSITORY" --ref main

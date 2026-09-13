@@ -187,7 +187,7 @@ Under **Settings → Code security and analysis**:
 3. Enable secret scanning and push protection when available.
 4. Optionally enable CodeQL default setup for JavaScript.
 
-The generated Dependabot configuration checks both npm dependencies and pinned GitHub Actions weekly.
+Dependabot checks npm dependencies each weekday and pinned GitHub Actions weekly. Minor and patch version updates are grouped by ecosystem, and security updates are grouped separately so transitive fixes can move with their direct tools. The `Merge validated Dependabot updates` workflow merges those groups only after the unprivileged pull-request validation succeeds, then explicitly starts the production deployment. Major version updates remain available for manual review. Never add a checkout or execute pull-request code in this privileged follow-up workflow.
 
 Under repository **General** settings, use:
 
