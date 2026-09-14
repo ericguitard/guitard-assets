@@ -32,7 +32,7 @@
   Content-Type: text/css; charset=utf-8
   Cache-Control: max-age=14400
 
-# Image assets currently receive a uniform four-hour browser cache lifetime.
+# Root and site-specific image assets receive a uniform four-hour browser cache lifetime.
 /*.jpg
   Content-Type: image/jpeg
   Cache-Control: max-age=14400

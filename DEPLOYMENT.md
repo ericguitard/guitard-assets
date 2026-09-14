@@ -212,7 +212,7 @@ Issues may remain disabled because `SECURITY.md` provides a private reporting ch
 
 4. Confirm the Cloudflare purge step ran when the token and zone variable were configured.
 5. Run **Actions → Validate production → Run workflow** once manually.
-6. Confirm the workflow validates the exact deployment commit, all 16 resources, all 13 non-public paths, content equality, representative `GET` and `HEAD` behavior, HTTP-to-HTTPS and root redirects, redirect CSP/HSTS, TLS lifetime, MIME types, cache headers, CORS, CSP, and the exact custom 404 response.
+6. Confirm the workflow validates the exact deployment commit, all declared resources and non-public paths, content equality, representative `GET` and `HEAD` behavior, HTTP-to-HTTPS and root redirects, redirect CSP/HSTS, TLS lifetime, MIME types, cache headers, CORS, CSP, and the exact custom 404 response.
 
 The scheduled monitor then runs daily at 11:27 UTC. GitHub may delay scheduled workflows during periods of high load, so the post-deployment smoke test remains the primary release check.
 

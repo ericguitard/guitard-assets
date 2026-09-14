@@ -56,6 +56,37 @@
       "cacheControl": "max-age=14400"
     },
     {
+      "path": "club/apple-touch-icon.png",
+      "contentType": "image/png",
+      "cacheControl": "max-age=14400",
+      "width": 180,
+      "height": 180
+    },
+    {
+      "path": "club/crest.png",
+      "contentType": "image/png",
+      "cacheControl": "max-age=14400",
+      "width": 600,
+      "height": 600
+    },
+    {
+      "path": "club/favicon.svg",
+      "contentType": "image/svg+xml",
+      "cacheControl": "max-age=14400"
+    },
+    {
+      "path": "club/og.jpg",
+      "contentType": "image/jpeg",
+      "cacheControl": "max-age=14400",
+      "width": 1200,
+      "height": 630
+    },
+    {
+      "path": "club/soccerball.svg",
+      "contentType": "image/svg+xml",
+      "cacheControl": "max-age=14400"
+    },
+    {
       "path": "android-chrome-192x192.png",
       "contentType": "image/png",
       "cacheControl": "max-age=14400",
