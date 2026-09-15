@@ -63,11 +63,39 @@
       "height": 180
     },
     {
+      "path": "club/android-chrome-192x192.png",
+      "contentType": "image/png",
+      "cacheControl": "max-age=14400",
+      "width": 192,
+      "height": 192
+    },
+    {
+      "path": "club/android-chrome-512x512.png",
+      "contentType": "image/png",
+      "cacheControl": "max-age=14400",
+      "width": 512,
+      "height": 512
+    },
+    {
       "path": "club/crest.png",
       "contentType": "image/png",
       "cacheControl": "max-age=14400",
       "width": 512,
       "height": 512
+    },
+    {
+      "path": "club/favicon-16x16.png",
+      "contentType": "image/png",
+      "cacheControl": "max-age=14400",
+      "width": 16,
+      "height": 16
+    },
+    {
+      "path": "club/favicon-32x32.png",
+      "contentType": "image/png",
+      "cacheControl": "max-age=14400",
+      "width": 32,
+      "height": 32
     },
     {
       "path": "club/favicon.ico",
