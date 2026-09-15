@@ -66,8 +66,13 @@
       "path": "club/crest.png",
       "contentType": "image/png",
       "cacheControl": "max-age=14400",
-      "width": 600,
-      "height": 600
+      "width": 512,
+      "height": 512
+    },
+    {
+      "path": "club/favicon.ico",
+      "contentType": "image/vnd.microsoft.icon",
+      "cacheControl": "max-age=14400"
     },
     {
       "path": "club/favicon.svg",
@@ -75,8 +80,8 @@
       "cacheControl": "max-age=14400"
     },
     {
-      "path": "club/og.jpg",
-      "contentType": "image/jpeg",
+      "path": "club/og-image.png",
+      "contentType": "image/png",
       "cacheControl": "max-age=14400",
       "width": 1200,
       "height": 630
