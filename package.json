@@ -4,8 +4,8 @@
   "private": true,
   "packageManager": "pnpm@11.23.0",
   "scripts": {
-    "format": "prettier --write \"css/**/*.css\" \"scripts/**/*.mjs\" \"stylelint.config.mjs\" \"assets.manifest.json\" \".htmlvalidate.json\" \".github/**/*.yml\" \"package.json\"",
-    "validate:format": "prettier --check --end-of-line auto \"css/**/*.css\" \"scripts/**/*.mjs\" \"stylelint.config.mjs\" \"assets.manifest.json\" \".htmlvalidate.json\" \".github/**/*.yml\" \"package.json\"",
+    "format": "prettier --write \"css/**/*.css\" \"scripts/**/*.mjs\" \"stylelint.config.mjs\" \"assets.manifest.json\" \"site.webmanifest\" \".htmlvalidate.json\" \".github/**/*.yml\" \"package.json\"",
+    "validate:format": "prettier --check --end-of-line auto \"css/**/*.css\" \"scripts/**/*.mjs\" \"stylelint.config.mjs\" \"assets.manifest.json\" \"site.webmanifest\" \".htmlvalidate.json\" \".github/**/*.yml\" \"package.json\"",
     "validate:html": "html-validate 404.html",
     "validate:css": "stylelint \"css/**/*.css\"",
     "validate:js": "node --check stylelint.config.mjs && node --check scripts/validate-resources.mjs && node --check scripts/validate-live.mjs && node --check scripts/stage-pages.mjs && node --check scripts/stage-pages.test.mjs && node --check scripts/purge-cloudflare.mjs",

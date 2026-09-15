@@ -15,6 +15,7 @@ The repository is published through GitHub Pages and proxied by Cloudflare. It i
 - Brand marks and BIMI artwork
 - Club-specific crest, social, touch-icon, and illustration assets under `/club`
 - Favicons, application icons, and maskable icons
+- Web app manifest for the canonical favicon package
 - Open Graph and social preview images
 - Responsive screenshot images
 - Custom protocol-endpoint `404` page and stylesheet

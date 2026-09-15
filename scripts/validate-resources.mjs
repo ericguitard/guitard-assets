@@ -6,6 +6,9 @@ const failures = [];
 const manifest = JSON.parse(
   await readFile(path.join(root, "assets.manifest.json"), "utf8"),
 );
+const webManifest = JSON.parse(
+  await readFile(path.join(root, "site.webmanifest"), "utf8"),
+);
 
 function fail(message) {
   failures.push(message);
@@ -191,6 +194,55 @@ for (const resource of manifest.resources ?? []) {
   }
 }
 
+if (
+  webManifest.id !== "/" ||
+  webManifest.start_url !== "/" ||
+  webManifest.scope !== "/"
+) {
+  fail("site.webmanifest must use / for id, start_url, and scope");
+}
+if (!webManifest.name || !webManifest.short_name) {
+  fail("site.webmanifest must declare name and short_name");
+}
+const webManifestIcons = Array.isArray(webManifest.icons)
+  ? webManifest.icons
+  : [];
+for (const icon of webManifestIcons) {
+  let iconUrl;
+  try {
+    iconUrl = new URL(icon.src);
+  } catch {
+    fail(
+      `site.webmanifest contains invalid icon URL ${JSON.stringify(icon.src)}`,
+    );
+    continue;
+  }
+  if (iconUrl.origin !== manifest.origin) {
+    fail(`site.webmanifest icon must use ${manifest.origin}: ${icon.src}`);
+    continue;
+  }
+  const iconPath = decodeURIComponent(iconUrl.pathname).replace(/^\//u, "");
+  if (!resourcePaths.has(iconPath)) {
+    fail(`site.webmanifest references undeclared icon resource ${icon.src}`);
+  }
+}
+for (const size of ["192x192", "512x512"]) {
+  if (
+    !webManifestIcons.some(
+      (icon) => icon.type === "image/png" && icon.sizes === size,
+    )
+  ) {
+    fail(`site.webmanifest must declare a ${size} PNG icon`);
+  }
+}
+if (
+  !webManifestIcons.some(
+    (icon) => icon.type === "image/svg+xml" && icon.sizes === "any",
+  )
+) {
+  fail("site.webmanifest must declare the scalable SVG icon");
+}
+
 for (const relativePath of manifest.siteFiles ?? []) {
   if (!isSafeRelativePath(relativePath) || !(await isFile(relativePath))) {
     fail(`Site file is missing or unsafe: ${JSON.stringify(relativePath)}`);
@@ -234,6 +286,7 @@ const publicExtensions = new Set([
   ".jpg",
   ".png",
   ".svg",
+  ".webmanifest",
 ]);
 const discoveredPublicFiles = (await walk()).filter(
   (relativePath) =>
@@ -257,6 +310,13 @@ const html = await readFile(
   path.join(root, manifest.errorDocument.path),
   "utf8",
 );
+if (
+  !/<link\s+rel=["']manifest["']\s+href=["']\/site\.webmanifest["']/iu.test(
+    html,
+  )
+) {
+  fail(`${manifest.errorDocument.path} must reference /site.webmanifest`);
+}
 const references = [];
 for (const tag of html.match(/<(?:a|img|link|script)\b[^>]*>/gi) ?? []) {
   references.push(attribute(tag, "href") ?? attribute(tag, "src"));
