@@ -117,7 +117,7 @@ Use **Set static** for:
 
 | Header | Value |
 | --- | --- |
-| `Content-Security-Policy` | `default-src 'none'; script-src 'none'; script-src-attr 'none'; connect-src 'none'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'` |
+| `Content-Security-Policy` | `default-src 'none'; script-src 'none'; script-src-attr 'none'; connect-src 'none'; style-src 'self'; img-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'` |
 
 Keep this rule scoped to the hostname so the policy applies to successful, redirect, and error responses.
 
@@ -223,8 +223,9 @@ For every new or renamed public file:
 1. Add or update its entry in `assets.manifest.json`.
 2. Include MIME type and cache policy.
 3. Include exact width and height for PNG files.
-4. Run `pnpm run check` and `pnpm run stage:pages`.
-5. Open a pull request and wait for validation.
+4. Keep `site.webmanifest` aligned when changing favicon or application-icon files.
+5. Run `pnpm run check` and `pnpm run stage:pages`.
+6. Open a pull request and wait for validation.
 
 An undeclared public image, stylesheet, icon, or `robots.txt` file causes CI to fail. Files not declared in the manifest are not included in the Pages artifact.
 

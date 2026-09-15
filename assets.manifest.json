@@ -32,7 +32,7 @@
   "headers": {
     "accessControlAllowOrigin": "*",
     "crossOriginResourcePolicy": "cross-origin",
-    "contentSecurityPolicy": "default-src 'none'; script-src 'none'; script-src-attr 'none'; connect-src 'none'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+    "contentSecurityPolicy": "default-src 'none'; script-src 'none'; script-src-attr 'none'; connect-src 'none'; style-src 'self'; img-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
     "permissionsPolicy": "accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), serial=(), usb=(), web-share=(), xr-spatial-tracking=()",
     "xContentTypeOptions": "nosniff"
   },
@@ -188,6 +188,11 @@
       "cacheControl": "max-age=14400",
       "width": 1280,
       "height": 720
+    },
+    {
+      "path": "site.webmanifest",
+      "contentType": "application/manifest+json; charset=utf-8",
+      "cacheControl": "max-age=14400"
     }
   ]
 }

@@ -24,7 +24,8 @@ function normalizedText(buffer) {
 function isTextResource(resource) {
   return (
     resource.contentType.startsWith("text/") ||
-    resource.contentType === "image/svg+xml"
+    resource.contentType === "image/svg+xml" ||
+    resource.contentType.startsWith("application/manifest+json")
   );
 }
 
@@ -398,7 +399,12 @@ async function validateOnce() {
     }
   }
 
-  const headResourcePaths = ["favicon.svg", "favicon-32x32.png", "robots.txt"];
+  const headResourcePaths = [
+    "favicon.svg",
+    "favicon-32x32.png",
+    "robots.txt",
+    "site.webmanifest",
+  ];
   for (const relativePath of headResourcePaths) {
     const resource = manifest.resources.find(
       (candidate) => candidate.path === relativePath,
