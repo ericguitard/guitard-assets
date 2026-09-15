@@ -192,7 +192,7 @@
     {
       "path": "site.webmanifest",
       "contentType": "application/manifest+json; charset=utf-8",
-      "cacheControl": "max-age=14400"
+      "cacheControl": "max-age=600"
     }
   ]
 }

@@ -4,7 +4,7 @@
 #
 # Two consequences of the current split:
 #   1. Any change to the /* or /404.html blocks below that must reach production requires a matching change in the Cloudflare Transform rules. `validate-live.mjs` in .github/workflows/validate-live.yml compares live response headers against this specification and will flag drift on the next scheduled run.
-#   2. Cache-Control rules for /css/*.css, images, icons, /robots.txt, and /site.webmanifest document the four-hour browser lifetime enforced in production by Cloudflare's Browser Cache TTL. Keep that Cloudflare setting and these values aligned.
+#   2. Cache-Control rules document the browser lifetimes enforced in production: four hours for styles, images, icons, and robots.txt, and 10 minutes for deployment metadata, the error document, and the web app manifest. Keep the Cloudflare settings and these values aligned.
 
 # Every published resource is intentionally usable across origins, including favicons, social previews, and the BIMI image retrieved by email clients.
 /*
@@ -57,4 +57,4 @@
 # The web app manifest declares the canonical icon package used by browser clients.
 /site.webmanifest
   Content-Type: application/manifest+json; charset=utf-8
-  Cache-Control: max-age=14400
+  Cache-Control: max-age=600
