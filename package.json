@@ -18,8 +18,8 @@
     "check": "pnpm run validate:format && pnpm run validate:html && pnpm run validate:css && pnpm run validate:js && pnpm run validate:tests && pnpm run validate:resources && pnpm run validate:dependencies"
   },
   "devDependencies": {
-    "html-validate": "11.15.0",
-    "prettier": "3.9.6",
+    "html-validate": "11.16.0",
+    "prettier": "3.9.8",
     "stylelint": "17.15.0"
   }
 }
