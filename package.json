@@ -4,8 +4,8 @@
   "private": true,
   "packageManager": "pnpm@11.23.0",
   "scripts": {
-    "format": "prettier --write \"css/**/*.css\" \"scripts/**/*.mjs\" \"stylelint.config.mjs\" \"assets.manifest.json\" \"site.webmanifest\" \".htmlvalidate.json\" \".github/**/*.yml\" \"package.json\"",
-    "validate:format": "prettier --check --end-of-line auto \"css/**/*.css\" \"scripts/**/*.mjs\" \"stylelint.config.mjs\" \"assets.manifest.json\" \"site.webmanifest\" \".htmlvalidate.json\" \".github/**/*.yml\" \"package.json\"",
+    "format": "prettier --write \"css/**/*.css\" \"scripts/**/*.mjs\" \"stylelint.config.mjs\" \"assets.manifest.json\" \"site.webmanifest\" \".htmlvalidate.json\" \".github/**/*.yml\" \"package.json\" \"pnpm-workspace.yaml\"",
+    "validate:format": "prettier --check --end-of-line auto \"css/**/*.css\" \"scripts/**/*.mjs\" \"stylelint.config.mjs\" \"assets.manifest.json\" \"site.webmanifest\" \".htmlvalidate.json\" \".github/**/*.yml\" \"package.json\" \"pnpm-workspace.yaml\"",
     "validate:html": "html-validate 404.html",
     "validate:css": "stylelint \"css/**/*.css\"",
     "validate:js": "node --check stylelint.config.mjs && node --check scripts/validate-resources.mjs && node --check scripts/validate-live.mjs && node --check scripts/stage-pages.mjs && node --check scripts/stage-pages.test.mjs && node --check scripts/purge-cloudflare.mjs",
@@ -20,6 +20,7 @@
   "devDependencies": {
     "html-validate": "11.16.1",
     "prettier": "3.9.9",
-    "stylelint": "17.16.0"
+    "stylelint": "17.16.0",
+    "braces": "file:vendor/braces"
   }
 }
