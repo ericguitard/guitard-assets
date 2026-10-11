@@ -4,6 +4,7 @@ on:
   workflow_run:
     workflows: ["Validate"]
     types: [completed]
+    branches: ["dependabot/**"]
 
 permissions:
   actions: write
@@ -13,23 +14,24 @@ permissions:
 jobs:
   merge:
     name: Merge safe update
-    if: >-
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.event == 'pull_request' &&
-      github.event.workflow_run.actor.login == 'dependabot[bot]' &&
-      github.event.workflow_run.pull_requests[0].number != null
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Merge the validated update
         shell: bash
         env:
+          MERGE_ELIGIBLE: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.actor.login == 'dependabot[bot]' && github.event.workflow_run.pull_requests[0].number != null }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
           PR_NUMBER: ${{ github.event.workflow_run.pull_requests[0].number }}
           REPOSITORY: ${{ github.repository }}
         run: |
           set -euo pipefail
+
+          if [[ "$MERGE_ELIGIBLE" != "true" ]]; then
+            echo "No eligible validated Dependabot update to merge."
+            exit 0
+          fi
 
           pr_json="$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER")"
           author="$(jq -r '.user.login' <<<"$pr_json")"
