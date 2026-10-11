@@ -13,6 +13,7 @@
     "validate:resources": "node scripts/validate-resources.mjs",
     "validate:dependencies": "pnpm audit --audit-level high",
     "validate:live": "node scripts/validate-live.mjs",
+    "validate:origin": "node scripts/validate-origin-tls.mjs",
     "stage:pages": "node scripts/stage-pages.mjs",
     "purge:cloudflare": "node scripts/purge-cloudflare.mjs",
     "check": "pnpm run validate:format && pnpm run validate:html && pnpm run validate:css && pnpm run validate:js && pnpm run validate:tests && pnpm run validate:resources && pnpm run validate:dependencies"
