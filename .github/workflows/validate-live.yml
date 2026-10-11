@@ -26,7 +26,11 @@ jobs:
         with:
           node-version: 24
 
+      - name: Check GitHub Pages origin certificate renewal
+        run: node scripts/validate-origin-tls.mjs
+
       - name: Validate production asset origin
+        if: ${{ !cancelled() }}
         env:
           EXPECTED_DEPLOYMENT_SHA: ${{ github.sha }}
           LIVE_VALIDATE_ATTEMPTS: 3
