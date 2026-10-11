@@ -16,6 +16,8 @@
     "scripts/stage-pages.mjs",
     "scripts/stage-pages.test.mjs",
     "scripts/validate-live.mjs",
+    "scripts/validate-origin-tls.mjs",
+    "scripts/validate-origin-tls.test.mjs",
     "scripts/validate-resources.mjs",
     ".gitignore",
     ".htmlvalidate.json",
