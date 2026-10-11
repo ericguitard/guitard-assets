@@ -139,6 +139,13 @@ to hide the failure.
 References: [GitHub custom-domain HTTPS troubleshooting](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/troubleshooting-custom-domains-and-github-pages)
 and [Cloudflare HTTP 526](https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-5xx-errors/error-526/).
 
+Recovery on 2026-10-11 succeeded after approved temporary DNS-only routing and
+removing/re-adding the custom domain in Pages. The replacement certificate was
+verified on all four origins and expires 2027-01-09 at 17:58:38 UTC. Cloudflare
+proxying and Pages HTTPS enforcement were restored. Production validation run
+38156506228, attempt 2, passed. This proves recovery, not future automatic renewal
+through the proxy; the advance-expiry monitor remains necessary.
+
 ### Redirect Rules
 
 Keep or create a 301 redirect rule named `assets.guitard.ca (redirect)` matching:
