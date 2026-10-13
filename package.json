@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "html-validate": "11.16.2",
-    "prettier": "3.9.9",
+    "prettier": "3.9.10",
     "stylelint": "17.16.0",
     "braces": "file:vendor/braces"
   }
