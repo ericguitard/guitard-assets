@@ -19,7 +19,7 @@
     "check": "pnpm run validate:format && pnpm run validate:html && pnpm run validate:css && pnpm run validate:js && pnpm run validate:tests && pnpm run validate:resources && pnpm run validate:dependencies"
   },
   "devDependencies": {
-    "html-validate": "11.16.2",
+    "html-validate": "11.16.4",
     "prettier": "3.9.10",
     "stylelint": "17.16.0",
     "braces": "file:vendor/braces"
