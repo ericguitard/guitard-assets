@@ -21,7 +21,7 @@
   "devDependencies": {
     "html-validate": "11.18.0",
     "prettier": "3.9.10",
-    "stylelint": "17.16.0",
+    "stylelint": "18.0.0",
     "braces": "file:vendor/braces"
   }
 }
