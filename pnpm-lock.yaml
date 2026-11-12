@@ -17,8 +17,8 @@ importers:
         specifier: file:vendor/braces
         version: '@guitard-club/braces@file:vendor/braces'
       html-validate:
-        specifier: 11.19.0
-        version: 11.19.0
+        specifier: 11.21.0
+        version: 11.21.0
       prettier:
         specifier: 3.9.10
         version: 3.9.10
@@ -131,8 +131,8 @@ packages:
     resolution: {integrity: sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==}
     engines: {node: '>=8'}
 
-  html-validate@11.19.0:
-    resolution: {integrity: sha512-+QSAz0rcgoBoX6MoVve5EAxPcmvmg+aPqChVGA9oYN3gM7IwF9NBFtEEJOzGokBeaExWlTM4eUV6atj2h5pCtg==}
+  html-validate@11.21.0:
+    resolution: {integrity: sha512-W7lepYb8uGwVqaFUuq/bV2Pu0nAeW2YBzDWi+hNJaZ0LSjHCfMTSuCRwtpYvs5o4h9/FGpTB6KpJacCekM8XCQ==}
     engines: {node: ^22.22.0 || >= 24.8.0}
     hasBin: true
     peerDependencies:
@@ -337,7 +337,7 @@ snapshots:
     dependencies:
       to-regex-range: 5.0.1
 
-  html-validate@11.19.0:
+  html-validate@11.21.0:
     dependencies:
       '@html-validate/stylish': 6.0.0
       '@sidvind/better-ajv-errors': 7.0.0(ajv@8.20.0)
