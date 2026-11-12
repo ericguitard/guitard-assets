@@ -5,7 +5,8 @@ import test from "node:test";
 const require = createRequire(import.meta.url);
 const braces = require("braces");
 const fromStylelint = createRequire(require.resolve("stylelint"));
-const micromatch = fromStylelint("micromatch");
+// Stylelint 18 uses picomatch instead of micromatch.
+const picomatch = fromStylelint("picomatch");
 
 test("patched braces preserves glob alternatives, ranges, escaping, and nested groups", () => {
   assert.deepEqual(braces.expand("src/{app,lib}/{1..3}.ts"), [
@@ -22,7 +23,9 @@ test("patched braces preserves glob alternatives, ranges, escaping, and nested g
     "src/{app,lib}/*.tsx",
   );
   assert.deepEqual(
-    micromatch(["app/a.ts", "lib/b.ts", "public/c.js"], "{app,lib}/**/*.ts"),
+    ["app/a.ts", "lib/b.ts", "public/c.js"].filter((path) =>
+      picomatch("{app,lib}/**/*.ts")(path),
+    ),
     ["app/a.ts", "lib/b.ts"],
   );
 });
@@ -45,9 +48,6 @@ test("rejects deeply nested braces and parentheses before recursive walking", ()
           name: "SyntaxError",
         });
       }
-      assert.throws(() => micromatch.braceExpand(pattern + "{c,d}"), {
-        name: "SyntaxError",
-      });
     }
   }
 });
@@ -71,8 +71,6 @@ test("guards caller-supplied ASTs, cycles, and direct walker imports", () => {
   }
 });
 
-test("micromatch resolves the locally patched braces dependency", () => {
-  const fromMicromatch = createRequire(fromStylelint.resolve("micromatch"));
-  assert.equal(fromMicromatch.resolve("braces"), require.resolve("braces"));
+test("the direct braces dependency remains locally patched", () => {
   assert.equal(require("braces/package.json").version, "3.0.3-guitard.1");
 });
