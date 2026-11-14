@@ -54,5 +54,5 @@ jobs:
               ;;
           esac
 
-          gh pr merge "$PR_NUMBER" --repo "$REPOSITORY" --squash --delete-branch
+          gh pr merge "$PR_NUMBER" --repo "$REPOSITORY" --squash --delete-branch --match-head-commit "$HEAD_SHA"
           gh workflow run deploy.yml --repo "$REPOSITORY" --ref main
